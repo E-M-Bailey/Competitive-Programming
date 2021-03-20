@@ -418,6 +418,7 @@ using min_heap = priority_queue<T, Container, greater<T>>;
 
 #define MIN(T) (numeric_limits<T>::min())
 #define MAX(T) (numeric_limits<T>::max())
+#define INF(T) (numeric_limits<T>::infinity())
 
 inline constexpr uli gcd(uli l, uli r)
 {
