@@ -22,6 +22,47 @@
 #include <unordered_set>
 #include <vector>
 
+#ifdef _MSC_VER
+inline int __builtin_clz(unsigned int value)
+{
+	return __lzcnt(value);
+}
+inline int __builtin_clzl(unsigned long int value)
+{
+	return __lzcnt(value);
+}
+inline int __builtin_clzll(unsigned long long int value)
+{
+	return value & 0xffffffff00000000ull ? __lzcnt(value >> 32) : 32 + __lzcnt(value);
+}
+inline constexpr int __builtin_ctzll(unsigned long long int value);
+inline constexpr int __builtin_ctz(unsigned int value)
+{
+	return __builtin_ctzll(value);
+}
+inline constexpr int __builtin_ctzl(unsigned long int value)
+{
+	return __builtin_ctzll(value);
+}
+inline constexpr int __builtin_ctzll(unsigned long long int value)
+{
+	if (value == 0)
+	{
+		return 437; // undefined
+	}
+	int ctr = 0;
+#define CTZ_SEGMENT(n) do { if (!(value & ((1ull << (n)) - 1))) { ctr |= (n); value >>= (n); } } while (0)
+	CTZ_SEGMENT(1 << 5);
+	CTZ_SEGMENT(1 << 4);
+	CTZ_SEGMENT(1 << 3);
+	CTZ_SEGMENT(1 << 2);
+	CTZ_SEGMENT(1 << 1);
+	CTZ_SEGMENT(1 << 0);
+#undef CTZ_SEGMENT
+	return ctr;
+}
+#endif
+
 #define loop(m, n, i) for (uli i = (m); i < (n); i++)
 #define rloop(m, n, i) for (uli i = (n); i-- > (m);)
 
@@ -369,239 +410,77 @@ typedef priority_queue<psf>        pqpsf;
 typedef priority_queue<pdf>        pqpdf;
 typedef priority_queue<pldf>       pqpldf;
 
-struct point
-{
-	uli x, y;
+template<class T, class Container = vector<T>>
+using max_heap = priority_queue<T, Container, less<T>>;
 
-	inline constexpr bool operator==(const point& p) const
+template<class T, class Container = vector<T>>
+using min_heap = priority_queue<T, Container, greater<T>>;
+
+#define MIN(T) (numeric_limits<T>::min())
+#define MAX(T) (numeric_limits<T>::max())
+#define INF(T) (numeric_limits<T>::infinity())
+
+inline constexpr uli gcd(uli l, uli r)
+{
+	if (!(l && r))
 	{
-		return x == p.x && y == p.y;
+		return l | r;
 	}
-
-	inline constexpr point operator+(const point& p) const
+	int s = __builtin_ctz(l | r);
+	l >>= __builtin_ctz(l);
+	do
 	{
-		return { x + p.x, y + p.y };
+		r >>= __builtin_ctz(r);
+		if (l > r)
+		{
+			swap(l, r);
+		}
+		r -= l;
 	}
-};
-
-enum Direction
-{
-	NONE, NEG_X, POS_X, NEG_Y, POS_Y
-};
-
-struct node
-{
-	point pos;
-	vuli children;
-	uli idxInRow = 0;
-	uli idxInCol = 0;
-	Direction dir;
-};
-
-struct dfs1Node
-{
-	uli c;
-	uli p;
-	Direction d;
-
-	inline constexpr dfs1Node(uli c, uli p, Direction d) :
-		c(c),
-		p(p),
-		d(d)
-	{}
-};
-
-struct rowColEntry
-{
-	uli coord;
-	uli idx;
-
-	inline constexpr rowColEntry(uli coord, uli idx) :
-		coord(coord),
-		idx(idx)
-	{}
-};
-
-inline constexpr bool operator<(rowColEntry e1, rowColEntry e2)
-{
-	return e1.coord < e2.coord;
+	while (r);
+	return l << s;
 }
 
-typedef vector<rowColEntry> rowCol;
+inline constexpr ulli gcd(ulli l, ulli r)
+{
+	if (!(l && r))
+	{
+		return l | r;
+	}
+	int s = __builtin_ctzll(l | r);
+	l >>= __builtin_ctzll(l);
+	do
+	{
+		r >>= __builtin_ctzll(r);
+		if (l > r)
+		{
+			swap(l, r);
+		}
+		r -= l;
+	}
+	while (r);
+	return l << s;
+}
 
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli N, M, B;
-	cin >> N >> M >> B;
-	vector<rowCol> rows(N), cols(M);
-	//suli usedRows, usedCols;
-	vector<node> graph(B);
-	loop(0, B, i)
+	uli n, s = 0, d = 0;
+	cin >> n;
+	loop(0, n, i)
 	{
-		point p;
-		cin >> p.y >> p.x;
-		p.x--;
-		p.y--;
-		rows[p.y].emplace_back(p.x, i);
-		cols[p.x].emplace_back(p.y, i);
-		//usedRows.insert(p.y);
-		//usedCols.insert(p.x);
-		graph[i].pos = p;
-	}
-	//for (uli x : usedRows)
-	loop(0, N, y)
-	{
-		rowCol& row = rows[y];
-		if (row.size() > 1)
+		li x;
+		cin >> x;
+		if (x >= 0)
 		{
-			sort(row.begin(), row.end());
-			loop(0, row.size(), i)
-				graph[row[i].idx].idxInRow = i;
-		}
-	}
-	//for (uli y : usedCols)
-	loop(0, M, x)
-	{
-		rowCol& col = cols[x];
-		if (col.size() > 1)
-		{
-			sort(col.begin(), col.end());
-			loop(0, col.size(), i)
-				graph[col[i].idx].idxInCol = i;
+			s += x;
+			d++;
 		}
 	}
 
-	// DFS to construct graph
-	{
-		vector<dfs1Node> s;
-		s.emplace_back(0, 0, NONE);
-		while (!s.empty())
-		{
-			uli c = s.back().c, p = s.back().p;
-			Direction d = s.back().d;
-			s.pop_back();
-			graph[c].dir = d;
-			if (p != c)
-				graph[p].children.push_back(c);
-			point cPos = graph[c].pos;
-			uli idxInRow = graph[c].idxInRow, idxInCol = graph[c].idxInCol;
-			rowCol& row = rows[cPos.y], &col = cols[cPos.x];
-			bool fNegX = false, fPosX = false, fNegY = false, fPosY = false;
-			if (idxInRow > 0 && d != POS_X) // Check for a direct child to the left
-			{
-				rowColEntry e = row[idxInRow - 1];
-				if (fNegX = e.coord == cPos.x - 1)
-					s.emplace_back(e.idx, c, NEG_X);
-			}
-			if (idxInRow < row.size() - 1 && d != NEG_X) // Check for a direct child to the right
-			{
-				rowColEntry e = row[idxInRow + 1];
-				if (fPosX = e.coord == cPos.x + 1)
-					s.emplace_back(e.idx, c, POS_X);
-			}
-			if (idxInCol > 0 && d != POS_Y) // Check for a direct child up
-			{
-				rowColEntry e = col[idxInCol - 1];
-				if (fNegY = e.coord == cPos.y - 1)
-					s.emplace_back(e.idx, c, NEG_Y);
-			}
-			if (idxInCol < col.size() - 1 && d != NEG_Y) // Check for a direct child down
-			{
-				rowColEntry e = col[idxInCol + 1];
-				if (fPosY = e.coord == cPos.y + 1)
-					s.emplace_back(e.idx, c, POS_Y);
-			}
-			fNegX = fPosX = fNegY = fPosY = false;
-
-			switch (d)
-			{
-			case NEG_X: // Check for obstructors to the left
-				//if (!fNegX && idxInRow > 0)
-					//graph[c].children.push_back(row[idxInRow - 1].idx);
-				loop(0, idxInRow, i) graph[c].children.push_back(row[i].idx);
-				break;
-			case POS_X: // Check for obstructors to the right
-				//if (!fPosX && idxInRow < row.size() - 1)
-					//graph[c].children.push_back(row[idxInRow + 1].idx);
-				loop(idxInRow + 1, row.size(), i) graph[c].children.push_back(row[i].idx);
-				break;
-			case NEG_Y: // Check for obstructors up
-				//if (!fNegY && idxInCol > 0)
-					//graph[c].children.push_back(col[idxInCol - 1].idx);
-				loop(0, idxInCol, i) graph[c].children.push_back(col[i].idx);
-				break;
-			case POS_Y: // Check for obstructors down
-				//if (!fPosY && idxInCol < col.size() - 1)
-					//graph[c].children.push_back(col[idxInCol + 1].idx);
-				loop(idxInCol + 1, col.size(), i) graph[c].children.push_back(col[i].idx);
-				break;
-			}
-		}
-	}
-
-	vector<pair<Direction, point>> output;
-	output.reserve(B);
-	// DFS to detect cycles
-	{
-		vbi visited(B, false);
-		vbi inStack(B, false);
-		vuli s;
-		bool cycle = false;
-		s.push_back(0);
-		while (!cycle && !s.empty())
-		{
-			uli p = s.back();
-			if (inStack[p])
-			{
-				s.pop_back();
-				inStack[p] = false;
-			}
-			else
-			{
-				visited[p] = true;
-				inStack[p] = true;
-				output.emplace_back(graph[p].dir, graph[p].pos);
-				for (uli c : graph[p].children)
-				{
-					if (inStack[c])
-					{
-						cycle = true;
-						break;
-					}
-					if (!visited[c])
-						s.push_back(c);
-				}
-			}
-		}
-
-		if (cycle)
-			cout << "impossible";
-		else
-		{
-			cout << "possible";
-			for (pair<Direction, point> res : output)
-			{
-				switch (res.first)
-				{
-				case NEG_X:
-					cout << endl << "> " << res.second.y + 1;
-					break;
-				case POS_X:
-					cout << endl << "< " << res.second.y + 1;
-					break;
-				case NEG_Y:
-					cout << endl << "v " << res.second.x + 1;
-					break;
-				case POS_Y:
-					cout << endl << "^ " << res.second.x + 1;
-					break;
-				}
-			}
-		}
-	}
+	cout << setprecision(numeric_limits<ldf>::max_digits10) << ldf(s) / d;
 
 	return 0;
 }
