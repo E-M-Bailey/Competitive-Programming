@@ -13,15 +13,15 @@ inline size_t mergeSortInversionCount(Iter first, Iter last)
 	for (size_t halfM = 1; halfM <= n; halfM *= 2)
 	{
 		size_t m = 2 * halfM;
-		for (Iter lo = first; lo != last; lo += m)
+		for (Iter lo = first; lo != last; lo += min(m, static_cast<size_t>(last - lo)))
 		{
+			if (last - lo <= halfM) break;
+			bool stop = last - lo <= m;
 			Iter mid = lo + halfM;
-			Iter hi = min(mid + halfM, last);
-			if (hi <= mid)
-				break;
+			Iter hi = stop ? last : mid + halfM;
 			Iter lItr = lo, rItr = mid;
 			AIter aItr = aux.begin();
-			while (lItr < mid && rItr < hi)
+			while (lItr != mid && rItr != hi)
 			{
 				Elem l = move(*lItr), r = move(*rItr);
 				if (l <= r)
@@ -51,6 +51,8 @@ inline size_t mergeSortInversionCount(Iter first, Iter last)
 				rItr++;
 			}
 			move(aux.begin(), aItr, lo);
+			if (stop) break;
+			lo += m;
 		}
 	}
 	return inversions;

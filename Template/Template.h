@@ -838,6 +838,7 @@ inline void TupleWriteHelper<Depth, I>::write(tuple<Ts&...>&& c)
 template<size_t Depth, typename Iter, typename Delim0, typename... Delims>
 inline void write_rng(Iter first, Iter last, const tuple<Delim0, Delims...>& delims)
 {
+	if (first == last) return;
 	constexpr bool hasDelim = Depth < tuple_size<tuple<Delim0, Delims...>>::value;
 	constexpr size_t safeDepth = hasDelim ? Depth : 0;
 	if (hasDelim)
@@ -851,7 +852,9 @@ inline void write_rng(Iter first, Iter last, const tuple<Delim0, Delims...>& del
 	}
 	else
 	{
-		while (first != last) write(*(first++));
+		do
+			write(*(first++));
+		while (first != last);
 	}
 }
 
