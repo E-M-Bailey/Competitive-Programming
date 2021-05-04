@@ -15,23 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Template.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Implementations\Mergesort Inversion Count [O%28nlogn%29].h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Implementations\All Points Closest Pair [O(n) Expected].h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Test\Mergesort Inversion Count [O%28nlogn%29].cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="input.txt" />
     <Text Include="output.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="In-Progress\20211C Roaring Years.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

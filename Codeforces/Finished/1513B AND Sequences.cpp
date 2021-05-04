@@ -462,59 +462,83 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
+inline constexpr ulli MOD = 1000000007;
+
+inline constexpr ulli nPr(ulli n, ulli r)
 {
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
-	{
-		t[v] = a[tl];
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
+	if (r > n)
 		return 0;
-	if (l == tl && r == tr)
+	ulli ret = 1;
+	loop(n - r, n, i)
 	{
-		return t[v];
+		ret *= i + 1;
+		ret %= MOD;
 	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
+	return ret;
 }
 
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
+//inline ulli rec(uli n, vuli::iterator aBeg, vuli::iterator aEnd, vuli::iterator bBeg, vuli::iterator bEnd)
+//{
+//	Iter aLast = aEnd - 1;
+//	if (*aBeg & *bBeg == 0 && *aLast & *bBeg == 0)
+//	{
+//		ulli ct0 = 2;
+//		for (Iter i = aBeg + 1; i < aLast; i++)
+//			if (*i == 0)
+//				ct0++;
+//		return factMod(n - 2) * nPrMod(ct0 + 2, 2) % MOD;
+//	}
+//
+//}
+
+//inline ulli go(vuli& A)
+//{
+//	using Iter = vuli::iterator;
+//	using RIter = vuli::reverse_iterator;
+//	const uli n = A.size();
+//	const uli m = (n + 1) / 2;
+//	vuli B(m, MAX(uli));
+//	//Iter lMid = A.begin() + (n / 2 - 1), rMid = A.begin() + (n / 2);
+//	//uli lMid = (n / 2) - 1, rMid = 
+//	B[m - 1] = *lMid & *rMid;
+//	rloop(0, m - 1, i)
+//	{
+//		B[i] = B[i + 1] & *(lMid - i) & *(rMid + i);
+//	}
+//
+//	ulli went = n & 1 || *lMid == *rMid ? 1 : 2;
+//	rloop(0, m - 1, i)
+//	{
+//		//Iter aBeg = A.begin() + i;
+//		//Iter aEnd = A.end() - i;
+//		//Iter bBeg = B.begin() + i;
+//		//Iter bEnd = B.end();
+//		//Iter aLast = aEnd - 1;
+//		if (*aBeg & ~*bBeg == 0 && *aLast & ~*bBeg == 0)
+//		{
+//			ulli ct0 = 2;
+//			for (Iter i = aBeg + 1; i < aLast; i++)
+//				if (*i == 0)
+//					ct0++;
+//			went = factMod(n - 2) * nPrMod(ct0 + 2, 2) % MOD;
+//		}
+//		else
+//		{
+//			ulli cur = 1;
+//
+//		}
+//	}
+//	//return go(n, A.begin(), A.end(), B.begin(), B.end());
+//}
+
+ulli go(const vuli& A, uli B)
 {
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
+	uli n = A.size();
+	uli ctB = 0;
+	for (uli a : A)
+		if (a == B)
+			ctB++;
+	return nPr(ctB, 2) * nPr(n - 2, n - 2) % MOD;
 }
 
 int main()
@@ -522,40 +546,21 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	uli T;
+	cin >> T;
+	loop(0, T, t)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		uli n;
+		cin >> n;
+		vuli A(n);
+		uli B = ~0u;
+		loop(0, n, i)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
+			cin >> A[i];
+			B &= A[i];
+		}
 
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+		cout << go(A, B) << endl;
 	}
 
 	return 0;

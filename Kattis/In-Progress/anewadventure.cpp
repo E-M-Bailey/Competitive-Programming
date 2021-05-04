@@ -68,7 +68,7 @@ inline constexpr int __builtin_ctzll(unsigned long long int value)
 
 #define tCases() uli testCaseCount; cin >> testCaseCount; for (uli testCaseIndex = 0; testCaseIndex < testCaseCount; testCaseIndex++)
 
-#define endl '\n'
+//#define endl '\n'
 
 using namespace std;
 
@@ -462,59 +462,67 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
+uli C, A;
+
+inline vuli neighbors(uli u, const vbi& M)
 {
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
+	uli i = u / A, j = u % A;
+	vuli ret;
+	ret.reserve(4);
+	if (i > 0)
 	{
-		t[v] = a[tl];
+		uli v0 = (i - 1) * A + (j + A - 1) % A, v1 = (i - 1) * A + j;
+		if (!(M[v0] || M[v1]))
+			ret.push_back(v0);
 	}
+	if (i == C - 1)
+		ret.push_back(C * A);
 	else
 	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
+		uli v0 = (i + 1) * A + (j + A - 1) % A, v1 = (i + 1) * A + j;
+		if (!(M[v0] || M[v1]))
+			ret.push_back(v0);
 	}
+	{
+		uli v0 = u, v1 = i * A + (j + 1) % A;
+		if (!(M[v0] || M[v1]))
+			ret.push_back(v0);
+	}
+	{
+		uli v0 = i * A + (j + 2 * A - 2) % A, v1 = i * A + (j + A - 1) % A;
+		if (!(M[v0] || M[v1]))
+			ret.push_back(v0);
+	}
+	{
+		uli v0 = i * A + (j + A - 1) % A, v1 = i * A + j;
+		if (!(M[v0] || M[v1]))
+			ret.push_back(v0);
+	}
+	return ret;
 }
 
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
+uli go(const vbi& M)
 {
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
+	vbi V(C * A + 1, false);
+	qpuli Q;
+	Q.emplace(0u, 0u);
+	while (!Q.empty())
 	{
-		return t[v];
+		uli u = Q.front().first;
+		if (V[u])
+		{
+			Q.pop();
+			continue;
+		}
+		uli d = Q.front().second;
+		if (u == C * A)
+			return d;
+		Q.pop();
+		V[u] = true;
+		for (uli v : neighbors(u, M))
+			Q.emplace(v, d + 1);
 	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
+	return MAX(uli);
 }
 
 int main()
@@ -522,41 +530,25 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	cin >> C >> A;
+	vbi M(C * A);
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		string line;
+		getline(cin, line);
+		loop(0, C, i)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+			getline(cin, line);
+			loop(0, A, j)
+			{
+				M[i * A + j] = line[j] == 'M';
+			}
+		}
 	}
+	ulli time = go(M);
+	if (time == MAX(uli))
+		cout << "-1";
+	else
+		cout << time;
 
 	return 0;
 }

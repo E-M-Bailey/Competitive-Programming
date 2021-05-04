@@ -33,7 +33,7 @@ inline int __builtin_clzl(unsigned long int value)
 }
 inline int __builtin_clzll(unsigned long long int value)
 {
-	return value & 0xffffffff00000000ull ? __lzcnt(value >> 32) : 32 + __lzcnt(value);
+	return value & 0xffffffff00000000ull ? __lzcnt(static_cast<unsigned long int>(value >> 32)) : 32 + __lzcnt(static_cast<unsigned long int>(value));
 }
 inline constexpr int __builtin_ctzll(unsigned long long int value);
 inline constexpr int __builtin_ctz(unsigned int value)
@@ -462,59 +462,155 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
+//template<typename Iter>
+//ulli comp(Iter beg, Iter end, Iter st)
+//{
+//	ulli res = 0;
+//	uli m = *st, M = *st;
+//	Iter hi = st + 1, lo = st;
+//	while (hi < end && lo > beg)
+//	{
+//		lo--;
+//		M = max(M, *lo);
+//		m = min(m, *lo);
+//		res += M - m;
+//		M = max(M, *hi);
+//		m = min(m, *hi);
+//		res += M - m;
+//		hi++;
+//	}
+//	while (hi < end)
+//	{
+//		M = max(M, *hi);
+//		m = min(m, *hi);
+//		res += M - m;
+//		hi++;
+//	}
+//	while (lo > beg)
+//	{
+//		lo--;
+//		M = max(M, *lo);
+//		m = min(m, *lo);
+//		res += M - m;
+//	}
+//	return res;
+//}
+//
+//ulli go(vuli& S)
+//{
+//	ulli best = MAX(ulli);
+//	uli n = S.size();
+//	loop(0, n, i)
+//	{
+//		best = min(best, comp(S.cbegin(), S.cend(), S.cbegin() + i));
+//		best = min(best, comp(S.crbegin(), S.crend(), S.crbegin() + i));
+//	}
+//	return best;
+//}
+
+
+inline uli msbIdx(uli x)
 {
-	ulli d;
-	ulli c;
+	return __builtin_clz(1) - __builtin_clz(x);
+}
+
+inline constexpr uli lsb(uli x)
+{
+	return uli(li(x) & -li(x));
+}
+
+template<typename Pred>
+struct rmq
+{
+	static const int B = 30;
+	Pred pred;
+	vuli data;
+	uli n;
+	vuli mask, t;
+
+	inline uli op(uli x, uli y)
+	{
+		return pred(data[x], data[y]) ? x : y;
+	}
+
+	inline uli small(uli r, uli size = B)
+	{
+		return r - msbIdx(mask[r] & ((1u << size) - 1));
+	}
+
+	inline rmq(vuli&& v, Pred pred) :
+		data(v),
+		n(v.size()),
+		mask(n),
+		t(n),
+		pred(pred)
+	{
+		uli cMask = 0;
+		loop(0, n, i)
+		{
+			cMask <<= 1;
+			cMask &= (1u << B) - 1;
+			while (cMask > 0 && op(i, i - msbIdx(lsb(cMask))) == 1)
+				cMask ^= lsb(cMask);
+			cMask |= 1;
+			mask[i] = cMask;
+		}
+		loop(0, n / B, i)
+		{
+			t[i] = small(B * i + B - 1);
+		}
+		for (uli j = 1; 1u << j <= n / B; j++)
+			for (uli i = 0; i + (1u << j) <= n / B; i++)
+				t[n / B * j + i] = op(t[n / B * (j - 1) + i], t[n / B * (j - 1) + i + (1u << j - 1)]);
+	}
+
+	inline rmq(const vuli& v, Pred pred) :
+		rmq(move(vuli(v)), pred)
+	{}
+
+	uli query(uli lo, uli hi)
+	{
+		if (hi - lo + 1 <= B)
+			return data[small(hi, hi - lo + 1)];
+		uli ans = op(small(lo + B - 1), small(hi));
+		uli x = lo / B + 1, y = hi / B + 1;
+		if (x <= y)
+		{
+			uli j = msbIdx(y - x + 1);
+			ans = op(ans, op(t[n / B * j + x], t[n / B * j + y - (1u << j) + 1]));
+		}
+		return data[ans];
+	}
 };
 
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
+ulli go(vuli& S)
 {
-	if (tl == tr)
+	uli n = S.size();
+	vvulli DP(n, vulli(n, 0));
+	vvulli m(n, vulli(n, 0));
+	vvulli M(n, vulli(n, 0));
+	//rmq m(S, less());
+	//rmq M(S, greater());
+	loop(0, n, i)
 	{
-		t[v] = a[tl];
+		m[i][i] = M[i][i] = S[i];
 	}
-	else
+	loop(1, n, d)
 	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
+		loop(0, n - d, i)
+		{
+			uli j = i + d;
+			m[i][j] = min((ulli)S[i], m[i + 1][j]);
+			M[i][j] = max((ulli)S[i], M[i + 1][j]);
+			ulli d = M[i][j] - m[i][j];
+			ulli noI = d + DP[i + 1][j];
+			ulli noJ = d + DP[i][j - 1];
+			//ulli noI = M.query(i + 1, j) - m.query(i + 1, j) + DP[i + 1][j];
+			//ulli noJ = M.query(i, j - 1) - m.query(i, j + 1) + DP[i][j + 1];
+			DP[i][j] = min(noI, noJ);
+		}
 	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
+	return DP[0][n - 1];
 }
 
 int main()
@@ -522,41 +618,15 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
+	uli n;
+	cin >> n;
+	vuli S(n);
 	loop(0, n, i)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
+		cin >> S[i];
 	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
-		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
-	}
+	sort(S.begin(), S.end());
+	cout << go(S);
 
 	return 0;
 }

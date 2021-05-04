@@ -462,59 +462,187 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
+//struct stNode
+//{
+//	uli l, r, p, pd = 0, ln = MAX(uli);
+//	vuli children = vuli(27, MAX(uli));
+//	inline stNode(uli l = 0, uli r = 0, uli p = MAX(uli)) :
+//		l(l), r(r), p(p)
+//	{}
+//
+//	inline constexpr uli eLen()
+//	{
+//		return r - l;
+//	}
+//
+//	inline constexpr uli depth()
+//	{
+//		pd + eLen();
+//	}
+//
+//	inline constexpr bool inEdge(uli pos)
+//	{
+//		return pd <= pos && pos < depth();
+//	}
+//
+//	//inline uli& operator[](char c)
+//	//{
+//	//	return children[c - '@'];
+//	//}
+//};
+//
+//struct sTree
+//{
+//	string data;
+//	//vector<stNode> nodes;
+//
+//	inline void make();
+//
+//	inline sTree(string&& str) :
+//		data(str + '@')
+//	{
+//		nodes.emplace_back();
+//	}
+//
+//	inline void build(uli idx, string str)
+//	{
+//		
+//	}
+//};
+
+//inline constexpr uli ABET_SIZE = 27;
+//inline constexpr uli NONE = MAX(uli);
+//struct Alphabet
+//{
+//	array<uli, 'Z' + 1> data{};
+//	inline constexpr Alphabet()
+//	{
+//		data['\0'] = 0;
+//		loop(0, ABET_SIZE - 1, c)
+//			data[c + 'A'] = c + 1;
+//	}
+//	inline constexpr uli operator[](char ch) const
+//	{
+//		return data[ch];
+//	}
+//};
+//constexpr const Alphabet abet{};
+
+//struct sTree
+//{
+//	const char* data;
+//	uli n;
+//	vuli starts, ends, parents;
+//	vvuli children;
+//
+//	inline sTree(string&& str) :
+//		data(str.c_str()),
+//		n(str.size() + 1)
+//	{
+//		vuli links;
+//		uli aNode, aEdge, aLen, rem;
+//		// make root:
+//		starts.push_back(NONE);
+//		ends.push_back(NONE);
+//		parents.push_back(NONE);
+//		children.push_back(vuli(ABET_SIZE, 0));
+//		links.push_back(NONE);
+//		// add first character
+//		starts.push_back(0);
+//		ends.push_back(1);
+//		parents.push_back(0);
+//		children.push_back(vuli(ABET_SIZE, 0));
+//		links.push_back(NONE);
+//		children[0][abet[data[0]]] = 1;
+//		loop(1, n, i)
+//		{
+//
+//		}
+//	}
+//};
+
+//void cSort(vuli& RA, uli k)
+//{
+//	uli limit = max(26u, k);
+//	vuli f(limit, 0);
+//	for ()
+//}
+//
+//vuli mkSA(const string& str)
+//{
+//	uli n = str.size();
+//	vuli SA(n, 0), RA(n);
+//	loop(0, n, i)
+//		RA[i] = str[i];
+//	for (uli k = 1; k < n; k *= 2)
+//	{
+//		cSort(RA, k);
+//		cSort(RA, 0);
+//		vuli temp(n);
+//		uli r = 0;
+//		temp[SA[0]] = r;
+//		loop(0, n, i)
+//			temp[SA[i]] =
+//	}
+//}
+const uli ABET = 2 * 26 + 1;
+
+inline pair<vuli, vli> scs(const vuli& seq)
 {
-	ulli d;
-	ulli c;
-};
+	uli n = seq.size();
 
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
+	vuli p(n), ct(max(ABET, n), 0);
+	vli c(n);
+	loop(0, n, i)
+		ct[seq[i]]++;
+	loop(1, ABET, i)
+		ct[i] += ct[i - 1];
+	loop(0, n, i)
+		p[--ct[seq[i]]] = i;
+	c[p[0]] = 0;
+	uli cNum = 0;
+	loop(1, n, i)
+		c[p[i]] = cNum += seq[p[i]] != seq[p[i - 1]];
+	cNum++;
+	vli pn(n), cn(n);
+	for (uli k = 1; k < n; k *= 2)
 	{
-		t[v] = a[tl];
+		loop(0, n, i)
+		{
+			pn[i] = p[i] - k;
+			if (pn[i] < 0)
+				pn[i] += n;
+		}
+		fill(ct.begin(), ct.begin() + cNum, 0);
+		loop(0, n, i)
+			ct[c[pn[i]]]++;
+		loop(1, cNum, i)
+			ct[i] += ct[i - 1];
+		rloop(0, n, i)
+			p[--ct[c[pn[i]]]] = pn[i];
+		cn[p[0]] = 0;
+		cNum = 1;
+		loop(1, n, i)
+		{
+			uli c1 = c[p[i]];
+			uli c2 = c[(p[i] + k) % n];
+			uli p1 = c[p[i - 1]];
+			uli p2 = c[(p[i - 1] + k) % n];
+			if (c1 != p1 || c2 != p2)
+				cNum++;
+			cn[p[i]] = cNum - 1;
+		}
+		swap(c, cn);
 	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
+	return { p, c };
 }
 
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
+uli log2(uli x)
 {
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
+	uli ret = 0;
+	while (x /= 2)
+		ret++;
+	return ret;
 }
 
 int main()
@@ -522,40 +650,28 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	vuli seq;
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
+		string str;
+		cin >> str;
+		seq.reserve(str.size() + 1);
+		loop(0, str.size(), i)
+			seq.push_back(str[i] < 'a' ? str[i] - 'A' + 1 : str[i] - 'a' + 27);
+		seq.push_back(0);
 	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
-		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
 
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
+	vuli SA;
+	vli C;
 	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+		pair<vuli, vli> scsRes = scs(seq);
+		SA = move(scsRes.first);
+		C = move(scsRes.second);
+	}
+	SA.erase(SA.begin());
+
+	tCases()
+	{
+
 	}
 
 	return 0;

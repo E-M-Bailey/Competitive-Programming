@@ -10,6 +10,7 @@
 #include <list>
 #include <map>
 #include <math.h>
+#include <numeric>
 #include <queue>
 #include <regex>
 #include <set>
@@ -462,59 +463,99 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
+// Hopcroft-Karp Max Bipartite Matching
+// All edges in graph should be from the first set of vertices to the second.
+// First set has size m, second has size n
+uli hopcroftKarp(const vvuli& graph, uli m, uli n)
 {
-	ulli d;
-	ulli c;
-};
+	vuli PU(m, n), PV(n, m);
+	uli res = 0;
+	vuli dist(m + 1);
+	quli q;
+	vuli st;
+	st.reserve(m);
+	vuli state(m);
+	vbi dfsRes(m + 1);
+	dfsRes[m] = true;
 
-const uli MAXN = 200001;
+	const auto bfs = [&, m, n]() -> bool
+	{
+		loop(0, m, u)
+		{
+			if (PU[u] == n)
+			{
+				dist[u] = 0;
+				q.push(u);
+			}
+			else
+				dist[u] = MAX(uli);
+		}
+		dist[m] = MAX(uli);
+		while (!q.empty())
+		{
+			uli u = q.front();
+			q.pop();
+			if (dist[u] < dist[m])
+			{
+				for (uli v : graph[u])
+				{
+					if (dist[PV[v]] == MAX(uli))
+					{
+						dist[PV[v]] = dist[u] + 1;
+						q.push(PV[v]);
+					}
+				}
+			}
+		}
+		return dist[m] != MAX(uli);
+	};
 
-lli n, t[4 * MAXN];
+	const auto dfs = [&, m, n]() -> void
+	{
+		while (!st.empty())
+		{
+			uli u = st.back();
+			const vuli& adj = graph[u];
+			if (state[u] > 0)
+			{
+				uli v = adj[state[u] - 1];
+				if (dfsRes[PV[v]])
+				{
+					PV[v] = u;
+					PU[u] = v;
+					dfsRes[u] = true;
+					st.pop_back();
+					continue;
+				}
+			}
+			if (state[u] < adj.size())
+			{
+				uli v = adj[state[u]];
+				if (dist[PV[v]] == dist[u] + 1 && PV[v] != m)
+				{
+					st.push_back(PV[v]);
+					state[PV[v]] = 0;
+					state[u]++;
+				}
+			}
+			else
+			{
+				dist[u] = MAX(uli);
+				dfsRes[u] = false;
+				st.pop_back();
+				continue;
+			}
+		}
+	};
 
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
+	while (bfs())
 	{
-		t[v] = a[tl];
+		loop(0, m, u)
+		{
+			res += PU[u] == MAX(uli) && (state[u] = 0, st.push_back(u), dfs(), dfsRes[u]);
+		}
 	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
+	return res;
 }
 
 int main()
@@ -522,41 +563,7 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
-	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
-		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
 
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
-	}
 
 	return 0;
 }

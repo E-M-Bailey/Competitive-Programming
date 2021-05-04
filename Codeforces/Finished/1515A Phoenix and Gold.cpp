@@ -10,6 +10,7 @@
 #include <list>
 #include <map>
 #include <math.h>
+#include <numeric>
 #include <queue>
 #include <regex>
 #include <set>
@@ -462,100 +463,85 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
-{
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
-	{
-		t[v] = a[tl];
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
-}
-
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	uli T;
+	cin >> T;
+	loop(0, T, t)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		uli n, x;
+		cin >> n >> x;
+		vuli W(n);
+		uli total = 0;
+		loop(0, n, i)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+			cin >> W[i];
+			total += W[i];
+		}
+		if (x >= total)
+		{
+			if (x > total)
+			{
+				cout << "YES" << endl;
+				for (uli w : W)
+					cout << w << ' ';
+				cout << endl;
+			}
+			else
+			{
+				cout << "NO" << endl;
+			}
+			continue;
+		}
+		//if (total == x)
+		//{
+		//	cout << "NO" << endl;
+		//	continue;
+		//}
+		sort(W.begin(), W.end());
+		uli lim = total + 1;
+		vuli DP(lim, MAX(uli));
+		DP[0] = 0;
+		loop(0, n, i)
+		{
+			uli w = W[i];
+			rloop(0, lim, j)
+			{
+				uli k = j + w;
+				if (k == x) continue;
+				if (DP[j] != MAX(uli) && DP[k] == MAX(uli)) DP[k] = i;
+			}
+		}
+		uli s = 0;
+		loop(x + 1, lim, j)
+		{
+			if (DP[j] != MAX(uli))
+			{
+				s = j;
+				break;
+			}
+		}
+		cout << (s ? "YES" : "NO") << endl;
+		if (!s) continue;
+		vbi inFirstPart(n, false);
+		while (s)
+		{
+			uli i = DP[s];
+			inFirstPart[i] = true;
+			s -= W[i];
+		}
+		loop(0, n, i)
+		{
+			if (inFirstPart[i]) cout << W[i] << " ";
+		}
+		loop(0, n, i)
+		{
+			if (!inFirstPart[i]) cout << W[i] << " ";
+		}
+		cout << endl;
 	}
 
 	return 0;

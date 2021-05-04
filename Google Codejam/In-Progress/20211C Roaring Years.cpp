@@ -10,6 +10,7 @@
 #include <list>
 #include <map>
 #include <math.h>
+#include <numeric>
 #include <queue>
 #include <regex>
 #include <set>
@@ -462,58 +463,166 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
+bool incr(string& str, char lo = '0', char hi = '9' + 1)
 {
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
+	typedef string::iterator Iter;
+	typedef reverse_iterator<Iter> RIter;
+	RIter rFirst = reverse_iterator(str.begin()), rLast = reverse_iterator(str.end());
+	for (RIter it = rLast; it < rFirst; it++)
 	{
-		t[v] = a[tl];
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
+		if (++ * it == hi)
+		{
+			*it = lo;
+		}
 		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
+		{
+			return false;
+		}
+	}
+	str.insert(str.cbegin(), lo + 1);
+	return true;
+}
+
+// assumes str isn't 0 and has no leading 0's
+bool decr(string& str, char lo = '0', char hi = '9' + 1)
+{
+	typedef string::iterator Iter;
+	typedef reverse_iterator<Iter> RIter;
+	RIter rFirst = reverse_iterator(str.begin()), rLast = reverse_iterator(str.end());
+	char rHi = lo - 1;
+	char rLo = hi - 1;
+	for (RIter it = rLast; it < rFirst; it++)
+	{
+		if (-- * it == rHi)
+		{
+			*it = rLo;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	str.erase(str.cbegin());
+	return true;
+}
+
+bool all0(const string& str, char zero = '0')
+{
+	for (char ch : str)
+		if (ch != zero)
+			return false;
+	return true;
+}
+
+bool cmp(const string& lhs, const string& rhs)
+{
+	if (lhs.size() != rhs.size())
+	{
+		return lhs.size() < rhs.size();
+	}
+	else
+	{
+		return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+	}
+}
+
+string go(const string& Y, uli len, uli pos)
+{
+	typedef string::iterator Iter;
+	typedef string::const_iterator CIter;
+	typedef string::reverse_iterator RIter;
+	typedef string::const_reverse_iterator CRIter;
+	uli n = Y.size();
+	string prev, cur = Y.substr(pos, len);
+	//if (all0(cur)) return "";
+	//if (len == Y.size())
+	//{
+	//	incr(cur);
+	//	return Y + cur;
+	//}
+	CIter it = Y.cbegin() + pos, beg = Y.cbegin(), end = Y.cend();
+	string ret;
+	bool setMode = false;
+	// Backward
+	while (it >= beg)
+	{
+		if (!setMode)
+		{
+			prev = move(cur);
+			if (all0(prev)) return "";
+			decr(prev);
+			bool sh = prev.size() >= it - beg;
+			if (sh) return "";
+			//uli curLen = sh ? it - beg : prev.size();
+			uli curLen = prev.size();
+			cur = string(it - curLen, it);
+			if (!equal(cur.begin(), cur.end(), prev.begin()))
+			{
+
+			}
+		}
+	}
+
+	// Forward
+	cur = Y.substr(pos, len);
+	it = Y.cbegin() + pos + len;
+	setMode = false;
+	while (it < end)
+	{
+		if (!setMode)
+		{
+			prev = move(cur);
+			incr(prev);
+			bool sh = prev.size() >= end - it;
+			uli curLen = sh ? end - it : prev.size();
+			cur = string(it, it + curLen);
+			if (!equal(cur.begin(), cur.end(), prev.begin()))
+			{
+				if (cmp(prev.substr(0, curLen), cur)) return "";
+				setMode = true;
+				ret += string(Y.cbegin() + pos, it) + prev;
+			}
+			it += curLen;
+		}
+		else
+		{
+			incr(prev);
+			ret += prev;
+			it += min((uli)(end - it), (uli)prev.size());
+		}
+	}
+	if (!setMode)
+	{
+		return Y;
+	}
+	return ret;
+}
+
+string goOld(const string& Y, uli len)
+{
+	typedef string::iterator Iter;
+	uli n = Y.size();
+	string prev, cur = Y.substr(0, len);
+	if (all0(cur)) return "";
+	for (uli i = 1; i < n; i += len)
+	{
+		prev = move(cur);
+		uli curLen = min(len, n - i);
+		cur = Y.substr(i, curLen);
+		incr(prev);
+		if (!equal(cur.begin(), cur.end(), prev.begin()))
+		{
+			return "";
+		}
+	}
+	if (prev.size() == cur.size())
+	{
+		incr(cur);
+		return Y + cur;
+	}
+	else
+	{
+		return Y + prev.substr(cur.size());
 	}
 }
 
@@ -522,40 +631,25 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	uli T;
+	cin >> T;
+	loop(0, T, t)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		cout << "Case #" << t + 1 << ": ";
+		string Y;
+		cin >> Y;
+		incr(Y);
+		string bestR = "";
+		loop(1, Y.size(), len)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+			loop(0, Y.size(), pos)
+			{
+				string R = len + pos > Y.size() ? go(Y + string('0', len + pos - Y.size()), len, pos) : go(Y, len, pos);
+				if (R.empty()) continue;
+				if (bestR.empty() || cmp(R, bestR)) bestR = move(R);
+			}
+		}
+		cout << bestR << endl;
 	}
 
 	return 0;

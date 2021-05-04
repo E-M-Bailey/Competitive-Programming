@@ -10,6 +10,7 @@
 #include <list>
 #include <map>
 #include <math.h>
+#include <numeric>
 #include <queue>
 #include <regex>
 #include <set>
@@ -462,100 +463,79 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
-{
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
-	{
-		t[v] = a[tl];
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
-}
-
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	uli T;
+	cin >> T;
+	loop(0, T, t)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		uli n;
+		cin >> n;
+		vpuli S(n);
+		loop(0, n, i)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
+			cin >> S[i].first;
+		}
+		loop(0, n, i)
+		{
+			cin >> S[i].second;
+		}
+		sort(S.begin(), S.end(), [&](puli lhs, puli rhs)
+			{
+				return lhs.first < rhs.first || lhs.first == rhs.first && lhs.second > rhs.second;
+			});
+		vpuli U;
+		{
+			U.reserve(n);
+			uli curU = S[0].first;
+			uli startI = 0;
+			loop(0, n, i)
+			{
+				uli u = S[i].first;
+				if (u > curU)
+				{
+					U.emplace_back(startI, i);
+					curU = u;
+					startI = i;
+				}
+			}
+			U.emplace_back(startI, n);
+		}
+		vulli P(n);
+		{
+			ulli sum = 0;
+			vpuli::iterator curU = U.begin();
+			loop(0, n, i)
+			{
+				if (curU->second == i)
+				{
+					curU++;
+					sum = 0;
+				}
+				sum += S[i].second;
+				P[i] = sum;
+			}
+		}
 
+		vulli R(n);
+		for (puli u : U)
+		{
+			uli m = u.second - u.first;
+			for (uli k = 1; k <= m; k++)
+			{
+				uli l = (m / k) * k;
+				R[k - 1] += P[u.first + l - 1];
+			}
+		}
 
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+		loop(0, n, i)
+		{
+			cout << R[i] << ' ';
+		}
+		cout << '\n';
 	}
 
 	return 0;

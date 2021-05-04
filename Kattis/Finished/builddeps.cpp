@@ -10,6 +10,7 @@
 #include <list>
 #include <map>
 #include <math.h>
+#include <numeric>
 #include <queue>
 #include <regex>
 #include <set>
@@ -462,59 +463,114 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
+// Topological Sort
+//vuli topologicalSort(const vvuli& dag)
+//{
+//	uli n = dag.size();
+//	vuli res;
+//	res.reserve(n);
+//	vuli st;
+//	st.reserve(n);
+//	vbi visited(n, false);
+//	vbi temp(n, false);
+//	loop(0, n, i)
+//	{
+//		if (!visited[i])
+//		{
+//			st.push_back(i);
+//			while (!st.empty())
+//			{
+//				uli u = st.back();
+//				if (temp[u])
+//				{
+//					res.push_back(u);
+//					temp[u] = false;
+//					st.pop_back();
+//				}
+//				else
+//				{
+//					if (visited[u])
+//					{
+//						st.pop_back();
+//						continue;
+//					}
+//					visited[u] = true;
+//					for (uli v : dag[u])
+//					{
+//						if (!visited[v])
+//						{
+//							st.push_back(v);
+//						}
+//					}
+//					temp[u] = true;
+//				}
+//			}
+//		}
+//	}
+//	reverse(res.begin(), res.end());
+//	return res;
+//}
+
+// Reverse Topological Sort (with tracing)
+vuli rTopologicalSortTraced(const vvuli& dag, uli tr)
 {
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
+	uli n = dag.size();
+	vuli res;
+	res.reserve(n);
+	vuli st;
+	st.reserve(n);
+	vbi visited(n, false);
+	vbi temp(n, false);
+	vbi trace(n, false);
+	loop(0, n, i)
 	{
-		t[v] = a[tl];
+		if (!visited[i])
+		{
+			st.push_back(i);
+			while (!st.empty())
+			{
+				uli u = st.back();
+				if (temp[u])
+				{
+					if (!trace[u])
+					{
+						for (uli v : dag[u])
+						{
+							if (trace[v])
+							{
+								trace[u] = true;
+								break;
+							}
+						}
+					}
+					if (trace[u])
+						res.push_back(u);
+					temp[u] = false;
+					st.pop_back();
+				}
+				else
+				{
+					if (visited[u])
+					{
+						st.pop_back();
+						continue;
+					}
+					visited[u] = true;
+					trace[u] = u == tr;
+					for (uli v : dag[u])
+					{
+						if (!visited[v])
+						{
+							st.push_back(v);
+						}
+					}
+					temp[u] = true;
+				}
+			}
+		}
 	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
+	//reverse(res.begin(), res.end());
+	return res;
 }
 
 int main()
@@ -522,40 +578,45 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
+	string line;
+	uli n;
+	cin >> n;
+	getline(cin, line);
+	vvuli dag(n);
+	unordered_map<string, uli> nameToIdx;
+	nameToIdx.reserve(n);
+	vector<string> idxToName;
+	idxToName.reserve(n);
+	auto getIdx = [&](string& name)
+	{
+		auto iter = nameToIdx.find(name);
+		if (iter == nameToIdx.end())
+		{
+			uli idx = idxToName.size();
+			nameToIdx.emplace(name, idx);
+			idxToName.push_back(move(name));
+			return idx;
+		}
+		return iter->second;
+	};
+	string token;
 	loop(0, n, i)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		getline(cin, token, ':');
+		uli u = getIdx(token);
+		getline(cin, line);
+		stringstream strm(line);
+		while (strm >> token)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
+			dag[u].push_back(getIdx(token));
+		}
+	}
+	cin >> token;
+	uli tr = getIdx(token);
+	vuli sorted = rTopologicalSortTraced(dag, tr);
+	for (uli i : sorted)
 	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+		cout << idxToName[i] << endl;
 	}
 
 	return 0;

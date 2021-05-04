@@ -462,59 +462,47 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
+const uli MAXN = 12;
+
+inline constexpr uli ctBits(uli x)
 {
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
+	uli c = 0;
+	for (; x; x >>= 1)
 	{
-		t[v] = a[tl];
+		c += x & 1;
 	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
+	return c;
 }
 
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
+string vals2Name(uli n, uli s)
 {
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
+	stringstream strm;
+	strm << "PRE_VALS" << hex << n << "_" << hex << s;
+	return strm.str();
 }
 
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
+string vals1Name(uli n)
 {
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
+	stringstream strm;
+	strm << "PRE_VALS" << hex << n;
+	return strm.str();
+}
+
+string lens1Name(uli n)
+{
+	stringstream strm;
+	strm << "PRE_LENS" << hex << n;
+	return strm.str();
+}
+
+string vals0Name()
+{
+	return "PRE_VALS";
+}
+
+string lens0Name()
+{
+	return "PRE_LENS";
 }
 
 int main()
@@ -522,41 +510,60 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	vector<vvuli> vals(MAXN - 3);
+	loop(3, MAXN, n)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		vals[n - 3] = vvuli(n - 2);
+		loop(0, 1 << n - 1, x)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+			uli s = ctBits(x);
+			if (s >= 2)
+				vals[n - 3][s - 2].push_back(x);
+		}
+		loop(2, n, s)
+		{
+			cout << "const uli " << vals2Name(n, s) << "[]{ 0x" << hex << vals[n - 3][s - 2][0];
+			loop(1, vals[n - 3][s - 2].size(), i)
+			{
+				cout << ", 0x" << hex << vals[n - 3][s - 2][i];
+			}
+			cout << " };" << endl;
+		}
 	}
+	cout << endl;
+	loop(3, MAXN, n)
+	{
+		cout << "const uli* const " << vals1Name(n) << "[]{ " << vals2Name(n, 2);
+		loop(3, n, s)
+		{
+			cout << ", " << vals2Name(n, s);
+		}
+		cout << " };" << endl;
+	}
+	cout << endl;
+	loop(3, MAXN, n)
+	{
+		cout << "const uli " << lens1Name(n) << "[]{ 0x" << hex << vals[n - 3][0].size();
+		loop(3, n, s)
+		{
+			cout << ", 0x" << hex << vals[n - 3][s - 2].size();
+		}
+		cout << " };" << endl;
+	}
+	cout << endl;
+	cout << "const uli* const* const " << vals0Name() << "[]{ " << vals1Name(3);
+	loop(4, MAXN, n)
+	{
+		cout << ", " << vals1Name(n);
+	}
+	cout << " };" << endl;
+	cout << endl;
+	cout << "const uli* const " << lens0Name() << "[]{ " << lens1Name(3);
+	loop(4, MAXN, n)
+	{
+		cout << ", " << lens1Name(n);
+	}
+	cout << " };" << endl;
 
 	return 0;
 }

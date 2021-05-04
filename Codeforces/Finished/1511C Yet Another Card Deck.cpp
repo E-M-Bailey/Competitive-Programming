@@ -441,122 +441,316 @@ inline constexpr uli gcd(uli l, uli r)
 	return l << s;
 }
 
-inline constexpr ulli gcd(ulli l, ulli r)
-{
-	if (!(l && r))
-	{
-		return l | r;
-	}
-	int s = __builtin_ctzll(l | r);
-	l >>= __builtin_ctzll(l);
-	do
-	{
-		r >>= __builtin_ctzll(r);
-		if (l > r)
-		{
-			swap(l, r);
-		}
-		r -= l;
-	}
-	while (r);
-	return l << s;
-}
+//inline constexpr ulli gcd(ulli l, ulli r)
+//{
+//	if (!(l && r))
+//	{
+//		return l | r;
+//	}
+//	int s = __builtin_ctzll(l | r);
+//	l >>= __builtin_ctzll(l);
+//	do
+//	{
+//		r >>= __builtin_ctzll(r);
+//		if (l > r)
+//		{
+//			swap(l, r);
+//		}
+//		r -= l;
+//	}
+//	while (r);
+//	return l << s;
+//}
+//
+//struct PURQFenwickTree
+//{
+//	vli data;
+//	inline PURQFenwickTree(size_t n) :
+//		data(n + 1, 0)
+//	{}
+//	inline int query(size_t end)
+//	{
+//		int sum = 0;
+//		for (; end; end -= end & -end)
+//			sum += data[end];
+//		return sum;
+//	}
+//	inline int query(size_t beg, size_t end)
+//	{
+//		return query(end) - query(beg - 1);
+//	}
+//	inline void update(size_t idx, int diff)
+//	{
+//		for (; idx < data.size(); idx += idx & -idx)
+//			data[idx] += diff;
+//	}
+//};
 
-struct station
-{
-	ulli d;
-	ulli c;
-};
+//struct RUPQFenwickTree
+//{
+//	PURQFenwickTree purq;
+//	inline RUPQFenwickTree(size_t n) :
+//		purq(n)
+//	{}
+//	inline void update(size_t beg, size_t end, int diff)
+//	{
+//		purq.update(beg, diff);
+//		purq.update(end + 1, -diff);
+//	}
+//	inline int query(size_t idx)
+//	{
+//
+//	}
+//};
 
-const uli MAXN = 200001;
+//template<typename T>
+//struct Node
+//{
+//	T data;
+//	Node<T> *left = nullptr, *right = nullptr;
+//	uli height = 0, size = 0;
+//	inline constexpr Node(T data) :
+//		data(data)
+//	{}
+//	inline constexpr ~Node()
+//	{}
+//	inline constexpr void deleteAll()
+//	{
+//		if (left)
+//			left->deleteAll();
+//		if (right)
+//			right->deleteAll();
+//		delete this;
+//	}
+//	inline constexpr update()
+//	{
+//		uli lh = left ? left->height + 1 : 0;
+//		uli rh = right ? right->height + 1 : 0;
+//		uli ls = left ? left->size : 0;
+//		uli rs = right ? right->size : 0;
+//		height = max(lh, rh);
+//		size = ls + rs + 1;
+//	}
+//	inline constexpr Node* rotLeft()
+//	{
+//		Node* newRoot = right;
+//		right = newRoot->left;
+//		newRoot->left = this;
+//		update();
+//		newRoot->update();
+//		return newRoot;
+//	}
+//	inline constexpr Node* rotRight()
+//	{
+//		Node* newRoot = left;
+//		left = newRoot->right;
+//		newRoot->right = this;
+//		update();
+//		newRoot->update();
+//		return newRoot;
+//	}
+//	inline constexpr int balanceFactor()
+//	{
+//		int lh = left ? left->height : -1;
+//		int rh = right ? right->height : -1;
+//		return rh - lh;
+//	}
+//	inline constexpr Node* balance()
+//	{
+//		int bf = balanceFactor();
+//		if (bf < -1)
+//		{
+//			if (left->balanceFactor() > 0)
+//				left = left->rotLeft();
+//			return rotRight();
+//		}
+//		else if (bf > 1)
+//		{
+//			if (right->balanceFactor() < 0)
+//				right = right->rotRight();
+//			return rotLeft();
+//		}
+//		else
+//		{
+//			update();
+//			return this;
+//		}
+//	}
+//	inline constexpr Node* insert(T insData)
+//	{
+//		if (insData < data)
+//			left = left ? left->insert(insData) : new Node(insData);
+//		else
+//			right = right ? right->insert(insData) : new Node(insData);
+//		return balance();
+//	}
+//	inline constexpr Node* minNode()
+//	{
+//		Node *node = this;
+//		while (node->left != nullptr)
+//			node = node->left;
+//		return node;
+//	}
+//	inline constexpr Node* maxNode()
+//	{
+//		Node *node = this;
+//		while (node->right != nullptr)
+//			node = node->right;
+//		return node;
+//	}
+//	inline constexpr Node* remove(T remData)
+//	{
+//		if (remData < data)
+//		{
+//			left = left ? left->remove(remData) : nullptr;
+//			return balance();
+//		}
+//		else if (remData > data)
+//		{
+//			right = right ? right->remove(remData) : nullptr;
+//			return balance();
+//		}
+//		else
+//		{
+//			if (left && right)
+//			{
+//				data = right->minNode()->data;
+//				right = right->remove(remData);
+//				return balance();
+//			}
+//			else if (left)
+//			{
+//				Node* l = left;
+//				delete this;
+//				return l;
+//			}
+//			else if (right)
+//			{
+//				Node* r = right;
+//				delete this;
+//				return r;
+//			}
+//			else
+//			{
+//				delete this;
+//				return nullptr;
+//			}
+//		}
+//	}
+//};
+//
+//template<typename T>
+//struct AVL
+//{
+//	Node<T> *root = nullptr;
+//	inline constexpr AVL() {}
+//	inline constexpr void clear()
+//	{
+//		if (root)
+//			root->deleteAll();
+//	}
+//	inline constexpr ~AVL()
+//	{
+//		clear();
+//	}
+//	inline constexpr bool empty()
+//	{
+//		return root == nullptr;
+//	}
+//	inline constexpr void insert(T data)
+//	{
+//		root = root ? root->insert(data) : new Node(data);
+//	}
+//	inline constexpr void remove(T data)
+//	{
+//		if (root)
+//			root = root->remove(data);
+//	}
+//	inline constexpr bool contains(T data)
+//	{
+//		Node<T> *cur = root;
+//		while (cur)
+//		{
+//			if (data == cur->data)
+//				return true;
+//			else if (data < cur->data)
+//				cur = cur->left;
+//			else
+//				cur = cur->right;
+//		}
+//		return false;
+//	}
+//	inline constexpr size_t indexOf(T data)
+//	{
+//		size_t idx = 0;
+//		Node* cur = root;
+//		while (cur)
+//		{
+//			if (data == cur->data)
+//				return (cur->left ? cur->left->size : 0) + idx;
+//			else if (data < cur->data)
+//				cur = cur->left;
+//			else
+//			{
+//				idx += (cur->left ? cur->left->size + 1 : 1);
+//				cur = cur->right;
+//			}
+//		}
+//	}
+//	inline constexpr size_t size()
+//	{
+//		return empty() ? 0 : root->size;
+//	}
+//};
+//
+//struct Entry
+//{
+//	uli a;
+//	uli p;
+//};
 
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
-	{
-		t[v] = a[tl];
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
-}
+//inline constexpr bool operator==(Entry lhs, Entry rhs)
+//{
+//	return lhs.a == rhs.a;
+//}
+//
+//inline constexpr bool operator<(Entry lhs, Entry rhs)
+//{
+//	return lhs.p > rhs.p;
+//}
 
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
+	uli n, q;
+	cin >> n >> q;
+	//li P = 0;
+	//AVL<Entry> 
+	vli P(50, 0);
 	loop(0, n, i)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
+		uli a;
+		cin >> a;
+		a--;
+		if (P[a] == 0)
+			P[a] = i + 1;
 	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
-		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
+	loop(0, q, i)
 	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+		uli t;
+		cin >> t;
+		t--;
+		cout << P[t] << ' ';
+		loop(0, 50, a)
+		{
+			if (P[a] > 0 && P[a] < P[t])
+				P[a]++;
+		}
+		P[t] = 1;
 	}
+	cout << endl;
 
 	return 0;
 }

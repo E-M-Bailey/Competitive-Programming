@@ -462,12 +462,33 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
+const array<array<uli, 3>, 6> perms{ array<uli, 3>{0, 1, 2}, array<uli, 3>{0, 2, 1}, array<uli, 3>{1, 0, 2}, array<uli, 3>{1, 2, 0}, array<uli, 3>{2, 0, 1}, array<uli, 3>{2, 1, 0} };
+
+const ulli K = 43'200'000'000'000;
+
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
+	uli T;
+	cin >> T;
+	loop(0, T, t)
+	{
+		cout << "Case #" << t + 1 << ": ";
+		array<ulli, 3> ABC;
+		cin >> ABC[0] >> ABC[1] >> ABC[2];
+		for (const array<uli, 3>&perm : perms)
+		{
+			ulli &A = ABC[perm[0]], &B = ABC[perm[1]], &C = ABC[perm[2]];
+			ulli p = (B + K - A) % K;
+			ulli q = (C + K - B) % K;
+			loop(0, 12, h)
+			{
 
+			}
+		}
+	}
 
 	return 0;
 }

@@ -462,100 +462,173 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
-{
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
-	{
-		t[v] = a[tl];
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
-}
-
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
-	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
-		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
+	uli n;
+	cin >> n;
+
+	//vvuli A2(n, vuli(n, 0)), A5(n, vuli(n, 0));
+	//uli zi = MAX(uli), zj = MAX(uli);
 	//loop(0, n, i)
 	//{
-	//	invD[S[i].d] = i;
+	//	loop(0, n, j)
+	//	{
+	//		uli a;
+	//		cin >> a;
+	//		if (a == 0)
+	//		{
+	//			zi = i;
+	//			zj = j;
+	//			a = 10;
+	//		}
+	//		while (a % 2 == 0)
+	//		{
+	//			a /= 2;
+	//			A2[i][j]++;
+	//		}
+	//		while (a % 5 == 0)
+	//		{
+	//			a /= 5;
+	//			A5[i][j]++;
+	//		}
+	//	}
 	//}
 
+	//vvbi R2(n, vbi(n)), R5(n, vbi(n));
+	//const auto go = [&](const vvuli& A, vvbi& R) -> uli
+	//{
+	//	vvuli DP(n, vuli(n, 0));
+	//	uli m = n - 1;
+	//	DP[m][m] = A[m][m];
+	//	rloop(0, m, i)
+	//	{
+	//		DP[i][m] = DP[i + 1][m] + A[i][m];
+	//		R[i][m] = false;
+	//	}
+	//	rloop(0, m, j)
+	//	{
+	//		DP[m][j] = DP[m][j + 1] = A[m][j];
+	//		R[m][j] = true;
+	//	}
+	//	rloop(0, m, i)
+	//	{
+	//		rloop(0, m, j)
+	//		{
+	//			uli r = DP[i][j + 1], d = DP[i + 1][j];
+	//			R[i][j] = r <= d;
+	//			DP[i][j] = min(r, d) + A[i][j];
+	//		}
+	//	}
+	//	return DP[0][0];
+	//};
+	//
+	//const auto pt = [&](const vvbi& R) -> void
+	//{
+	//	uli i = 0, j = 0;
+	//	uli m = n - 1;
+	//	while (i != m || j != m)
+	//	{
+	//		bi r = R[i][j];
+	//		cout << (r ? 'R' : 'D');
+	//		(r ? j : i)++;
+	//	}
+	//};
 
-	build(a, 1, 0, n - 1);
+	//uli v2 = go(A2, R2);
+	//uli v5 = go(A5, R5);
+	//uli vm = min(v2, v5);
 
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
+	//if (vm > 1 && ~zi)
+	//{
+	//	loop(0, zi, i)
+	//	{
+	//		R2[i][0] = false;
+	//	}
+	//	loop(0, vm, j)
+	//	{
+	//		R2[zi][j] = true;
+	//	}
+	//	loop(zi, vm, i)
+	//	{
+	//		R2[i][vm] = false;
+	//	}
+	//	vm = v2 = 1;
+	//}
+	//cout << vm << endl;
+	//pt(vm == v2 ? R2 : R5);
+
+	vvpuli A(n, vpuli(n, puli{ 0, 0 }));
+	loop(0, n, i)
 	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+		loop(0, n, j)
+		{
+			uli a;
+			cin >> a;
+			if (a == 0)
+			{
+				A[i][j] = puli{ MAX(uli), 0 };
+				continue;
+			}
+			while (a % 2 == 0)
+			{
+				A[i][j].first++;
+				a /= 2;
+			}
+			while (a % 5 == 0)
+			{
+				A[i][j].second++;
+				a /= 5;
+			}
+		}
+	}
+	
+	vvpuli DP(n, vpuli(n));
+	vvbi PR(n, vbi(n));
+	DP[n - 1][n - 1] = A[n - 1][n - 1];
+	const auto is0 = [&](puli p) { return p.first == MAX(uli) && p.second == 0; };
+	rloop(0, n, i)
+	{
+		rloop(0, n, j)
+		{
+			if (i == n - 1 && j == n - 1)
+			{
+				continue;
+			}
+			puli a = A[i][j];
+			if (i == n - 1)
+			{
+				DP[i][j] = DP[i][j + 1];
+				PR[i][j] = false;
+			}
+			else if (j == n - 1)
+			{
+				DP[i][j] = DP[i + 1][j];
+				PR[i][j] = true;
+			}
+			else
+			{
+				puli d = DP[i + 1][j];
+				puli r = DP[i][j + 1];
+				uli dVal = is0(d) ? 1 : min(d.first + a.first, d.second + a.second);
+				uli rVal = is0(r) ? 1 : min(r.first + a.first, r.second + a.second);
+				PR[i][j] = dVal <= rVal;
+				DP[i][j] = PR[i][j] ? d : r;
+			}
+		}
+	}
+	puli res = DP[0][0];
+	cout << (is0(res) ? 1 : min(res.first, res.second)) << endl;
+	{
+		uli i = 0, j = 0;
+		while (i != n - 1 || j != n - 1)
+		{
+			bi pr = PR[i][j];
+			cout << (pr ? 'D' : 'R');
+			(pr ? i : j)++;
+		}
 	}
 
 	return 0;

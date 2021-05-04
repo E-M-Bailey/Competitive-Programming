@@ -10,6 +10,7 @@
 #include <list>
 #include <map>
 #include <math.h>
+#include <numeric>
 #include <queue>
 #include <regex>
 #include <set>
@@ -420,6 +421,49 @@ using min_heap = priority_queue<T, Container, greater<T>>;
 #define MAX(T) (numeric_limits<T>::max())
 #define INF(T) (numeric_limits<T>::infinity())
 
+template<typename T>
+inline T read(istream& strm = cin)
+{
+	T t;
+	strm >> t;
+	return t;
+}
+
+template<typename T>
+inline void read(T& t, istream& strm = cin)
+{
+	strm >> t;
+}
+
+template<typename T>
+inline void write(const T& t, ostream& strm = cout)
+{
+	t >> strm;
+}
+
+template<typename Iter>
+inline void read(Iter first, Iter last, istream& strm = cin)
+{
+	while (first < last)
+		read(*(first++), strm);
+}
+
+template<typename Iter>
+inline void write(Iter first, Iter last, ostream& strm = cout)
+{
+	while (first < last)
+		write(*(first++), strm);
+}
+
+// C++ tricks:
+// https://codeforces.com/blog/entry/74684
+#define ALL(c) (c).begin(), (c).end()
+#define CALL(c) (c).cbegin(), (c).cend()
+#define RALL(c) (c).rbegin(), (c).rend()
+#define CRALL(c) (c).crbegin(), (c).crend()
+
+#define CONTAINS(c, x) ((c).find(x) != (c).end())
+
 inline constexpr uli gcd(uli l, uli r)
 {
 	if (!(l && r))
@@ -462,101 +506,58 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
-{
-	ulli d;
-	ulli c;
+pli DIRS[32]{
+	pli{ 0, 1},
+	pli{ 1, 3},
+	pli{ 1, 2},
+	pli{ 2, 3},
+	pli{ 1, 1},
+	pli{ 3, 2},
+	pli{ 2, 1},
+	pli{ 3, 1},
+
+	pli{-0, 1},
+	pli{-1, 3},
+	pli{-1, 2},
+	pli{-2, 3},
+	pli{-1, 1},
+	pli{-3, 2},
+	pli{-2, 1},
+	pli{-3, 1},
+
+	pli{-0,-1},
+	pli{-1,-3},
+	pli{-1,-2},
+	pli{-2,-3},
+	pli{-1,-1},
+	pli{-3,-2},
+	pli{-2,-1},
+	pli{-3,-1},
+
+	pli{ 0,-1},
+	pli{ 1,-3},
+	pli{ 1,-2},
+	pli{ 2,-3},
+	pli{ 1,-1},
+	pli{ 3,-2},
+	pli{ 2,-1},
+	pli{ 3,-1},
 };
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
-	{
-		t[v] = a[tl];
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
-}
 
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	vpuli A(16);
+	loop(0, 4, i)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		loop(0, 4, j)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+			A[read<uli>() - 1] = { i, j };
+		}
 	}
+	vpli DP(17)
 
-	return 0;
+		return 0;
 }

@@ -462,59 +462,55 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
+bool incr(uli M, vulli& X, const vulli& N)
 {
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
+	loop(0, M, i)
 	{
-		t[v] = a[tl];
+		ulli& x = X[i];
+		x++;
+		if (x <= N[i])
+		{
+			return false;
+		}
+		x = 0;
 	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
+	return true;
 }
 
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
+inline ulli go(uli M, vuli& P, vulli& N)
 {
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
+	ulli best = 0;
+	ulli E = 0;
+	loop(0, M, i)
+		E += P[i] * N[i];
+	vulli X(M, 0);
+	while (!incr(M, X, N))
 	{
-		return t[v];
+		ulli e1 = E;
+		loop(0, M, i)
+		{
+			e1 -= X[i] * P[i];
+		}
+		ulli e2 = 1;
+		loop(0, M, i)
+		{
+			loop(0, X[i], j)
+			{
+				e2 *= P[i];
+				if (e2 > e1)
+				{
+					break;
+				}
+			}
+			if (e2 > e1)
+			{
+				break;
+			}
+		}
+		if (e2 == e1 && e1 > best)
+			best = e1;
 	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
+	return best;
 }
 
 int main()
@@ -522,40 +518,19 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	uli T;
+	cin >> T;
+	loop(0, T, t)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		uli M;
+		cin >> M;
+		vuli P(M);
+		vulli N(M);
+		loop(0, M, i)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+			cin >> P[i] >> N[i];
+		}
+		cout << "Case #" << t + 1 << ": " << go(M, P, N) << endl;
 	}
 
 	return 0;

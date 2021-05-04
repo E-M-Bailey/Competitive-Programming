@@ -462,59 +462,35 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
+ulli go(const vuli& S, const vvuli& P, vuli& I)
 {
-	ulli d;
-	ulli c;
-};
 
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
+	ulli ret = 0;
+	uli n = S.size();
+	loop(0, n, i)
 	{
-		t[v] = a[tl];
+		uli s = S[i];
+		uli cur = I[s];
+		uli next = ++I[s];
+		uli cp = P[s][cur];
+		uli np = next < P[s].size() ? P[s][next] : n;
+		loop(0, 26, j)
+		{
+			if (j == s || P[j].size() == 0)
+				continue;
+			uli idx = I[j];
+			//uli p = idx < P[j].size() ? P[j][idx] : n;
+			if (idx < P[j].size() && P[j][idx] <= np)
+				ret++;
+		}
+		//loop(cp + 1, np, j)
+		//{
+		//	uli t = S[j];
+		//	if ()
+		//}
+		//ret += np - cp - 1;
 	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
+	return ret;
 }
 
 int main()
@@ -522,41 +498,23 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	vuli S;
+	vvuli P(26);
+	vuli I(26, 0);
+	char prev = '\0';
+	char ch;
+	while (cin >> ch)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		if (ch != prev)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+			uli s = ch - 'a';
+			P[s].emplace_back(S.size());
+			S.push_back(s);
+			prev = ch;
+		}
 	}
+
+	cout << go(S, P, I);
 
 	return 0;
 }

@@ -462,59 +462,47 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
+typedef suli::const_iterator iter;
+
+bool go(const string& str, uli n)
 {
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
+	vbi TBeg(n, 0);
+	uli val = 0;
+	rloop(0, n, i)
 	{
-		t[v] = a[tl];
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
+		if (str[i] == 'M')
+			val++;
 		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
+		{
+			TBeg[i] = val;
+			val = max(1u, val) - 1;
+		}
 	}
+	uli a = 0, b = 0;
+	loop(0, n, i)
+	{
+		if (str[i] == 'T')
+		{
+			if (TBeg[i])
+			{
+				a++;
+			}
+			else
+			{
+				if (b == 0)
+					return false;
+				b--;
+			}
+		}
+		else
+		{
+			if (a == 0)
+				return false;
+			a--;
+			b++;
+		}
+	}
+	return a == 0 && b == 0;
 }
 
 int main()
@@ -522,40 +510,40 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	uli T;
+	cin >> T;
+	loop(0, T, t)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
-		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+		uli n;
+		cin >> n;
+		string str;
+		cin >> str;
+		//deque<uli> T, M;
+		//suli T, M;
+		//loop(0, n, i)
+		//{
+		//	char ch;
+		//	cin >> ch;
+		//	//(ch == 'T' ? T : M).push_back(i);
+		//	(ch == 'T' ? T : M).insert(i);
+		//}
+		//bool good = T.size() == M.size() * 2;
+		//for (; n && good; n -= 3)
+		//{
+		//	//uli a = T.front(), b = M.front(), c = T.back();
+		//	iter a = T.begin(), b = M.begin(), c = T.upper_bound(*b);
+		//	//T.pop_front(); M.pop_front(); T.pop_back();
+		//	bool ae = a == T.end(), be = b == M.end(), ce = c == T.end() || c == a;
+		//	if (ae || be || ce || *a >= *b || *b >= *c)
+		//		good = false;
+		//	if (!ae)
+		//		T.erase(a);
+		//	if (!be)
+		//		M.erase(b);
+		//	if (!ce)
+		//		T.erase(c);
+		//}
+		cout << (go(str, n) ? "YES" : "NO") << endl;
 	}
 
 	return 0;

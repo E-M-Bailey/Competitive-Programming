@@ -1,3 +1,6 @@
+#ifndef EMBAILEY_TEMPLATE
+#define EMBAILEY_TEMPLATE
+
 #include <cstring>
 #include <algorithm>
 #include <array>
@@ -10,6 +13,7 @@
 #include <list>
 #include <map>
 #include <math.h>
+#include <numeric>
 #include <queue>
 #include <regex>
 #include <set>
@@ -33,7 +37,7 @@ inline int __builtin_clzl(unsigned long int value)
 }
 inline int __builtin_clzll(unsigned long long int value)
 {
-	return value & 0xffffffff00000000ull ? __lzcnt(value >> 32) : 32 + __lzcnt(value);
+	return value & 0xffffffff00000000ull ? __lzcnt(static_cast<unsigned long int>(value >> 32)) : 32 + __lzcnt(static_cast<unsigned long int>(value));
 }
 inline constexpr int __builtin_ctzll(unsigned long long int value);
 inline constexpr int __builtin_ctz(unsigned int value)
@@ -68,7 +72,7 @@ inline constexpr int __builtin_ctzll(unsigned long long int value)
 
 #define tCases() uli testCaseCount; cin >> testCaseCount; for (uli testCaseIndex = 0; testCaseIndex < testCaseCount; testCaseIndex++)
 
-#define endl '\n'
+//#define endl '\n'
 
 using namespace std;
 
@@ -420,7 +424,451 @@ using min_heap = priority_queue<T, Container, greater<T>>;
 #define MAX(T) (numeric_limits<T>::max())
 #define INF(T) (numeric_limits<T>::infinity())
 
-inline constexpr uli gcd(uli l, uli r)
+// Based partially on:
+// https://codeforces.com/blog/entry/74684
+#define ALL(c) (c).begin(), (c).end()
+#define CALL(c) (c).cbegin(), (c).cend()
+#define RALL(c) (c).rbegin(), (c).rend()
+#define CRALL(c) (c).crbegin(), (c).crend()
+
+#define CONTAINS(c, x) ((c).find(x) != (c).end())
+
+template<size_t I>
+struct TupleReadHelper
+{
+	template<typename... Ts>
+	static inline void read(tuple<Ts...>& c);
+	template<typename... Ts>
+	static inline void read(tuple<Ts&...>&& c);
+};
+
+template<>
+struct TupleReadHelper<0>
+{
+	template<typename... Ts>
+	static inline void read(tuple<Ts...>& c) {}
+	template<typename... Ts>
+	static inline void read(tuple<Ts&...>&& c) {}
+};
+
+template<typename Iter>
+inline void read_rng(Iter first, Iter last);
+
+template<typename T>
+inline void read(T& t)
+{
+	cin >> t;
+}
+
+template<typename T, typename U>
+inline void read(pair<T, U>& c)
+{
+	read(c.first);
+	read(c.second);
+}
+
+template<typename... Ts>
+inline void read(tuple<Ts...>& c)
+{
+	TupleReadHelper<tuple_size<tuple<Ts...>>::value>::read(c);
+}
+
+template<typename... Ts>
+inline void read(tuple<Ts&...>&& c)
+{
+	TupleReadHelper<tuple_size<tuple<Ts...>>::value>::read(c);
+}
+
+template<typename T, size_t Size>
+inline void read(array<T, Size>& c)
+{
+	read_rng(ALL(c));
+}
+
+template<typename T, typename Alloc>
+inline void read(vector<T, Alloc>& c)
+{
+	read_rng(ALL(c));
+}
+
+template<typename T, typename Alloc>
+inline void read(deque<T, Alloc>& c)
+{
+	read_rng(ALL(c));
+}
+
+template<typename T, typename Alloc>
+inline void read(list<T, Alloc>& c)
+{
+	read_rng(ALL(c));
+}
+
+template<typename T, typename Alloc>
+inline void read(forward_list<T, Alloc>& c)
+{
+	read_rng(ALL(c));
+}
+
+template<size_t I>
+template<typename... Ts>
+inline void TupleReadHelper<I>::read(tuple<Ts...>& c)
+{
+	TupleReadHelper<I - 1>::read(c);
+	::read(get<I - 1>(c));
+}
+
+template<size_t I>
+template<typename... Ts>
+inline void TupleReadHelper<I>::read(tuple<Ts&...>&& c)
+{
+	TupleReadHelper<I - 1>::read(c);
+	::read(get<I - 1>(c));
+}
+
+template<typename T>
+inline T read()
+{
+	T t;
+	::read(t);
+	return t;
+}
+
+template<typename Iter>
+inline void read_rng(Iter first, Iter last)
+{
+	while (first != last)
+		read(*(first++));
+}
+
+template<size_t Depth, size_t I>
+struct TupleWriteHelper
+{
+	template<typename... Ts, typename Delim0, typename... Delims>
+	static inline void write(const tuple<Ts...>& c, const tuple<Delim0, Delims...>& delims);
+	template<typename... Ts>
+	static inline void write(const tuple<Ts...>& c);
+	template<typename... Ts, typename Delim0, typename... Delims>
+	static inline void write(tuple<Ts&...>&& c, const tuple<Delim0, Delims...>& delims);
+	template<typename... Ts>
+	static inline void write(tuple<Ts&...>&& c);
+};
+
+template<size_t Depth>
+struct TupleWriteHelper<Depth, 0>
+{
+	template<typename... Ts, typename Delim0, typename... Delims>
+	static inline void write(const tuple<Ts...>& c, const tuple<Delim0, Delims...>& delims) {}
+	template<typename... Ts>
+	static inline void write(const tuple<Ts...>& c) {}
+};
+
+template<size_t Depth = 0, typename Iter, typename Delim0, typename... Delims>
+inline void write_rng(Iter first, Iter last, const tuple<Delim0, Delims...>& delims);
+
+template<typename Iter>
+inline void write_rng(Iter first, Iter last);
+
+template<typename T>
+inline void write(const T& t)
+{
+	cout << t;
+}
+
+template<size_t Depth, typename T, typename Delim0, typename... Delims>
+inline void writeD(const T& t, const tuple<Delim0, Delims...>&)
+{
+	write(t);
+}
+
+template<typename T, typename U>
+inline void write(const pair<T, U>& c)
+{
+	write(c.first);
+	write(c.second);
+}
+
+template<size_t Depth, typename T, typename U, typename Delim0, typename... Delims>
+inline void writeD(const pair<T, U>& c, const tuple<Delim0, Delims...>& delims)
+{
+	constexpr bool hasDelim = Depth < tuple_size<tuple<Delim0, Delims...>>::value;
+	constexpr size_t safeDepth = hasDelim ? Depth : 0;
+	if (hasDelim)
+	{
+		writeD<Depth + 1>(c.first, delims);
+		write(get<safeDepth>(delims));
+		writeD<Depth + 1>(c.second, delims);
+	}
+	else
+	{
+		write(c.first);
+		write(c.second);
+	}
+}
+
+template<typename... Ts>
+inline void write(const tuple<Ts...>& c)
+{
+	TupleWriteHelper<0, tuple_size<tuple<Ts...>>::value>::write(c);
+}
+
+template<size_t Depth, typename... Ts, typename Delim0, typename... Delims>
+inline void writeD(const tuple<Ts...>& c, const tuple<Delim0, Delims...>& delims)
+{
+	TupleWriteHelper<Depth, tuple_size<tuple<Ts...>>::value>::write(c, delims);
+}
+
+template<typename... Ts>
+inline void write(tuple<Ts&...>&& c)
+{
+	TupleWriteHelper<0, tuple_size<tuple<Ts...>>::value>::write(c);
+}
+
+template<size_t Depth, typename... Ts, typename Delim0, typename... Delims>
+inline void writeD(tuple<Ts&...>&& c, const tuple<Delim0, Delims...>& delims)
+{
+	TupleWriteHelper<Depth, tuple_size<tuple<Ts...>>::value>::write(c, delims);
+}
+
+template<typename T>
+inline void write(const initializer_list<T>& c)
+{
+	write_rng(ALL(c));
+}
+
+template<size_t Depth, typename T, typename Delim0, typename... Delims>
+inline void writeD(const initializer_list<T>& c, const tuple<Delim0, Delims...>& delims)
+{
+	write_rng<Depth>(ALL(c), delims);
+}
+
+template<typename T, size_t Size>
+inline void write(const array<T, Size>& c)
+{
+	write_rng(ALL(c));
+}
+
+template<size_t Depth, typename T, size_t Size, typename Delim0, typename... Delims>
+inline void writeD(const array<T, Size>& c, const tuple<Delim0, Delims...>& delims)
+{
+	write_rng<Depth>(ALL(c), delims);
+}
+
+template<typename T, typename Alloc>
+inline void write(const vector<T, Alloc>& c)
+{
+	write_rng(ALL(c));
+}
+
+template<size_t Depth, typename T, typename Alloc, typename Delim0, typename... Delims>
+inline void writeD(const vector<T, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+{
+	write_rng<Depth>(ALL(c), delims);
+}
+
+template<typename T, typename Alloc>
+inline void write(const deque<T, Alloc>& c)
+{
+	write_rng(ALL(c));
+}
+
+template<size_t Depth, typename T, typename Alloc, typename Delim0, typename... Delims>
+inline void writeD(const deque<T, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+{
+	write_rng<Depth>(ALL(c), delims);
+}
+
+template<typename T, typename Alloc>
+inline void write(const list<T, Alloc>& c)
+{
+	write_rng(ALL(c));
+}
+
+template<size_t Depth, typename T, typename Alloc, typename Delim0, typename... Delims>
+inline void writeD(const list<T, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+{
+	write_rng<Depth>(ALL(c), delims);
+}
+
+template<typename T, typename Alloc>
+inline void write(const forward_list<T, Alloc>& c)
+{
+	write_rng(ALL(c));
+}
+
+template<size_t Depth, typename T, typename Alloc, typename Delim0, typename... Delims>
+inline void writeD(const forward_list<T, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+{
+	write_rng<Depth>(ALL(c), delims);
+}
+
+template<typename T, typename Pr, typename Alloc>
+inline void write(const set<T, Pr, Alloc>& c)
+{
+	write_rng(ALL(c));
+}
+
+template<size_t Depth, typename T, typename Pr, typename Alloc, typename Delim0, typename... Delims>
+inline void writeD(const set<T, Pr, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+{
+	write_rng<Depth>(ALL(c), delims);
+}
+
+template<typename T, typename Pr, typename Alloc>
+inline void write(const multiset<T, Pr, Alloc>& c)
+{
+	write_rng(ALL(c));
+}
+
+template<size_t Depth, typename T, typename Pr, typename Alloc, typename Delim0, typename... Delims>
+inline void writeD(const multiset<T, Pr, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+{
+	write_rng<Depth>(ALL(c), delims);
+}
+
+template<typename T, typename Hash, typename Eq, typename Alloc>
+inline void write(const unordered_set<T, Hash, Eq, Alloc>& c)
+{
+	write_rng(ALL(c));
+}
+
+template<size_t Depth, typename T, typename Hash, typename Eq, typename Alloc, typename Delim0, typename... Delims>
+inline void writeD(const unordered_set<T, Hash, Eq, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+{
+	write_rng<Depth>(ALL(c), delims);
+}
+
+template<typename T, typename Hash, typename Eq, typename Alloc>
+inline void write(const unordered_multiset<T, Hash, Eq, Alloc>& c)
+{
+	write_rng(ALL(c));
+}
+
+template<size_t Depth, typename T, typename Hash, typename Eq, typename Alloc, typename Delim0, typename... Delims>
+inline void writeD(const unordered_multiset<T, Hash, Eq, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+{
+	write_rng<Depth>(ALL(c), delims);
+}
+
+template<typename K, typename V, typename Pr, typename Alloc>
+inline void write(const map<K, V, Pr, Alloc>& c)
+{
+	write_rng(ALL(c));
+}
+
+template<size_t Depth, typename K, typename V, typename Pr, typename Alloc, typename Delim0, typename... Delims>
+inline void writeD(const map<K, V, Pr, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+{
+	write_rng<Depth>(ALL(c), delims);
+}
+
+template<typename K, typename V, typename Pr, typename Alloc>
+inline void write(const multimap<K, V, Pr, Alloc>& c)
+{
+	write_rng(ALL(c));
+}
+
+template<size_t Depth, typename K, typename V, typename Pr, typename Alloc, typename Delim0, typename... Delims>
+inline void writeD(const multimap<K, V, Pr, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+{
+	write_rng<Depth>(ALL(c), delims);
+}
+
+template<typename K, typename V, typename Hash, typename Eq, typename Alloc>
+inline void write(const unordered_map<K, V, Hash, Eq, Alloc>& c)
+{
+	write_rng(ALL(c));
+}
+
+template<size_t Depth, typename K, typename V, typename Hash, typename Eq, typename Alloc, typename Delim0, typename... Delims>
+inline void writeD(const unordered_map<K, V, Hash, Eq, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+{
+	write_rng<Depth>(ALL(c), delims);
+}
+
+template<typename K, typename V, typename Hash, typename Eq, typename Alloc>
+inline void write(const unordered_multimap<K, V, Hash, Eq, Alloc>& c)
+{
+	write_rng(ALL(c));
+}
+
+template<size_t Depth, typename K, typename V, typename Hash, typename Eq, typename Alloc, typename Delim0, typename... Delims>
+inline void writeD(const unordered_multimap<K, V, Hash, Eq, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+{
+	write_rng<Depth>(ALL(c), delims);
+}
+
+template<size_t Depth, size_t I>
+template<typename... Ts, typename Delim0, typename... Delims>
+inline void TupleWriteHelper<Depth, I>::write(const tuple<Ts...>& c, const tuple<Delim0, Delims...>& delims)
+{
+	constexpr bool hasDelim = Depth < tuple_size<tuple<Delim0, Delims...>>::value;
+	constexpr size_t safeDepth = hasDelim ? Depth : 0;
+	TupleWriteHelper<Depth, I - 1>::write(c, delims);
+	writeD<Depth + 1>(get<I - 1>(c), delims);
+	if (hasDelim && I < tuple_size<tuple<Ts...>>::value) ::write(get<safeDepth>(delims));
+}
+
+template<size_t Depth, size_t I>
+template<typename... Ts>
+inline void TupleWriteHelper<Depth, I>::write(const tuple<Ts...>& c)
+{
+	TupleWriteHelper<Depth, I - 1>::write(c);
+	::write(get<I - 1>(c));
+}
+
+template<size_t Depth, size_t I>
+template<typename... Ts, typename Delim0, typename... Delims>
+inline void TupleWriteHelper<Depth, I>::write(tuple<Ts&...>&& c, const tuple<Delim0, Delims...>& delims)
+{
+	constexpr bool hasDelim = Depth < tuple_size<tuple<Delim0, Delims...>>::value;
+	constexpr size_t safeDepth = hasDelim ? Depth : 0;
+	TupleWriteHelper<Depth, I - 1>::write(c, delims);
+	writeD<Depth + 1>(get<I - 1>(c), delims);
+	if (hasDelim && I < tuple_size<tuple<Ts...>>::value) ::write(get<safeDepth>(delims));
+}
+
+template<size_t Depth, size_t I>
+template<typename... Ts>
+inline void TupleWriteHelper<Depth, I>::write(tuple<Ts&...>&& c)
+{
+	TupleWriteHelper<Depth, I - 1>::write(c);
+	::write(get<I - 1>(c));
+}
+
+template<size_t Depth, typename Iter, typename Delim0, typename... Delims>
+inline void write_rng(Iter first, Iter last, const tuple<Delim0, Delims...>& delims)
+{
+	constexpr bool hasDelim = Depth < tuple_size<tuple<Delim0, Delims...>>::value;
+	constexpr size_t safeDepth = hasDelim ? Depth : 0;
+	if (hasDelim)
+	{
+		for (;;)
+		{
+			writeD<Depth + 1>(*(first++), delims);
+			if (first == last) break;
+			write(get<safeDepth>(delims));
+		}
+	}
+	else
+	{
+		while (first != last) write(*(first++));
+	}
+}
+
+template<typename Iter>
+inline void write_rng(Iter first, Iter last)
+{
+	while (first != last) write(*(first++));
+}
+
+template<typename T, typename Delim0, typename... Delims>
+inline void write(const T& t, const Delim0& delim0, const Delims&... delims)
+{
+	writeD<0>(t, tie(delim0, delims...));
+}
+
+template<typename T>
+inline constexpr T gcd(T l, T r)
 {
 	if (!(l && r))
 	{
@@ -441,122 +889,34 @@ inline constexpr uli gcd(uli l, uli r)
 	return l << s;
 }
 
-inline constexpr ulli gcd(ulli l, ulli r)
+template<typename T>
+inline constexpr T gcd(initializer_list<T> args)
 {
-	if (!(l && r))
-	{
-		return l | r;
-	}
-	int s = __builtin_ctzll(l | r);
-	l >>= __builtin_ctzll(l);
-	do
-	{
-		r >>= __builtin_ctzll(r);
-		if (l > r)
-		{
-			swap(l, r);
-		}
-		r -= l;
-	}
-	while (r);
-	return l << s;
+	return accumulate(ALL(args), (T)0, gcd<T>);
 }
 
-struct station
+template<typename T>
+inline constexpr T lcm(T l, T r) // l and r should be nonzero
 {
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
-	{
-		t[v] = a[tl];
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
+	return l / gcd(l, r) * r;
 }
 
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
+template<typename T>
+inline constexpr T lcm(initializer_list<T> args) // all elements of args (if any) should be nonzero
 {
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
+	return accumulate(ALL(args), (T)1, lcm<T>);
 }
 
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
-}
+void go();
 
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
-	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
-		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
-	}
+	go();
 
 	return 0;
 }
+
+#endif

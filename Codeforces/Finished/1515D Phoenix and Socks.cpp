@@ -10,6 +10,7 @@
 #include <list>
 #include <map>
 #include <math.h>
+#include <numeric>
 #include <queue>
 #include <regex>
 #include <set>
@@ -462,100 +463,75 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
-{
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
-	{
-		t[v] = a[tl];
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
-}
-
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	uli T;
+	cin >> T;
+	loop(0, T, t)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		uli n, l, r;
+		cin >> n >> l >> r;
+		vuli Lct(n, 0), Rct(n, 0);
+		uli c;
+		loop(0, l, i)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+			cin >> c;
+			c--;
+			Lct[c]++;
+		}
+		loop(0, r, i)
+		{
+			cin >> c;
+			c--;
+			Rct[c]++;
+		}
+		if (l < r)
+		{
+			swap(l, r);
+			swap(Lct, Rct);
+		}
+		uli sCost = (l - r) / 2;
+		{
+			uli d = sCost;
+			vuli resid;
+			loop(0, n, i)
+			{
+				if (d == 0) break;
+				if (Lct[i] > Rct[i])
+				{
+					uli diff = Lct[i] - Rct[i];
+					if (diff & 1) resid.push_back(i);
+					diff = min(diff / 2, d);
+					Lct[i] -= diff;
+					Rct[i] += diff;
+					d -= diff;
+				}
+			}
+			while (d && !resid.empty())
+			{
+				uli i = resid.back();
+				resid.pop_back();
+				Lct[i]--;
+				Rct[i]++;
+				d--;
+			}
+			loop(0, n, i)
+			{
+				if (d == 0) break;
+				uli diff = min(Lct[i], d);
+				Lct[i] -= diff;
+				Rct[i] += diff;
+			}
+		}
+		uli cCost = 0;
+		loop(0, n, i)
+		{
+			cCost += Lct[i] < Rct[i] ? Rct[i] - Lct[i] : Lct[i] - Rct[i];
+		}
+		cout << sCost + cCost / 2 << endl;
 	}
 
 	return 0;

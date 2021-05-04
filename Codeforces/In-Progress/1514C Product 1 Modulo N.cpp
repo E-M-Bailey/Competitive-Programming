@@ -462,101 +462,138 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
+ulli extendedGCD(ulli a, ulli b, ulli& x, ulli& y)
 {
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
+	if (b == 0)
 	{
-		t[v] = a[tl];
+		x = 1;
+		y = 0;
+		return a;
 	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
+	ulli X, Y;
+	ulli g = extendedGCD(b, a % b, X, Y);
+	x = Y;
+	y = X - Y * (a / b);
+	return g;
 }
 
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
+//constexpr ulli MOD = 1'000'000'007;
 
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
-}
+// Tags for search
+// multiple modular inverses
+// multiple modular multiplicative inverses
 
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	uli n;
+	cin >> n;
+	
+	vulli invertible;
+	invertible.reserve(n);
+	loop(1, n, i)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
+		if (gcd(n, i) == 1)
+			invertible.push_back(i);
 	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+	uli I = invertible.size();
+
+	vulli pref(I);
+	pref[0] = 1;
+	loop(1, I, i)
+	{
+		pref[i] = (pref[i - 1] * invertible[i]) % n;
+	}
+
+	vpulli factors;
+	ulli val = pref[I - 1];
+	for (ulli i = 2; i * i <= val; i++)
+	{
+		if (val % i != 0)
+			continue;
+		ulli amt = 1;
+		val /= i;
+		while (val % i == 0)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
+			val /= i;
+			amt++;
+		}
+		factors.emplace_back(i, amt);
+	}
+
+	vvpulli iFactors(I);
+	loop(0, I, i)
+	{
+		val = invertible[i];
+		for (pulli factor : factors)
+		{
+			if (val % factor.first != 0)
+				continue;
+			ulli amt = 1;
+			val /= factor.first;
+			while (amt < factor.second && val % factor.first == 0)
+			{
+				val /= factor.first;
+				amt++;
+			}
+			iFactors[i].emplace_back(factor.first, amt);
+		}
+	}
+
+	
+
+	//ulli x, y;
+	//extendedGCD(pref[I - 1], n, x, y);
+
+	//vulli INV(n, 0);
+	//rloop(1, I, i)
 	//{
-	//	invD[S[i].d] = i;
+	//	INV[invertible[i]] = (x * pref[i - 1]) % n;
+	//	x *= invertible[i];
+	//	x %= n;
+	//}
+	//INV[1] = x;
+
+	//vpulli DP(n, { 0, 0 });
+	//loop(0, I, i)
+	//{
+	//	loop(0, n, )
 	//}
 
 
-	build(a, 1, 0, n - 1);
 
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
-	}
+
+
+
+
+
+	//vulli res;
+	//loop(1, n, i)
+	//{
+	//	ulli inv = INV[i];
+	//	if (inv != 0 && inv != i)
+	//	{
+	//		res.push_back(i);
+	//	}
+	//}
+
+
+
+
+	//cout << res.size() << endl;
+	//for (ulli i : res)
+	//	cout << i << ' ';
+
+
+	//ulli fact = 1;
+	//loop(2, n, i)
+	//{
+	//	fact *= i;
+	//	fact %= MOD;
+	//}
+	
 
 	return 0;
 }

@@ -462,59 +462,59 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
+/*struct bigInt
 {
-	ulli d;
-	ulli c;
+	vulli data;
+
+	bigInt(ulli x) :
+		data(1, x)
+	{}
+
+
 };
 
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
+inline bool operator==(const bigInt& lhs, const bigInt& rhs)
 {
-	if (tl == tr)
-	{
-		t[v] = a[tl];
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
+	return lhs.data == rhs.data;
 }
 
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
+inline bool operator!=(const bigInt& lhs, const bigInt& rhs)
 {
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
+	return lhs.data != rhs.data;
 }
 
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
+inline bool operator<(const bigInt& lhs, const bigInt& rhs)
 {
-	if (tl == tr)
+	return lhs.data.size() < rhs.data.size() ;
+}*/
+
+//ulli go(vector<string>& X)
+uli go(uli N, const vulli& X)
+{
+	uli ret = 0;
+	ulli prev = X[0];
+	for (uli i = 1; i < N; i++)
 	{
-		t[v] = new_val;
+		ulli cur = X[i];
+
+		if (cur <= prev)
+		{
+			ulli aPow10 = 1;
+			while (cur + aPow10 - 1 <= prev)
+			{
+				ret++;
+				aPow10 *= 10;
+				cur *= 10;
+			}
+			if (cur <= prev)
+			{
+				cur = prev + 1;
+			}
+		}
+
+		prev = cur;
 	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
+	return ret;
 }
 
 int main()
@@ -522,40 +522,19 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	uli T;
+	cin >> T;
+	loop(0, T, t)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		uli N;
+		cin >> N;
+		vulli X(N);
+		loop(0, N, i)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
+			cin >> X[i];
+		}
+		cout << "Case #" << t + 1 << ": " << go(N, X) << endl;
 
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
 	}
 
 	return 0;

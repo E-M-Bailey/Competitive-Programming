@@ -462,59 +462,108 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
+inline ulli cyclicSum(ulli lo, ulli hi, uli N, const vulli& GS)
 {
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
-	{
-		t[v] = a[tl];
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
+	if (hi <= lo)
 		return 0;
-	if (l == tl && r == tr)
+	ulli dec = lo / N;
+	lo -= dec * N;
+	hi -= dec * N;
+	ulli fullCycles = (hi - lo) / N;
+	ulli res = GS[N] * fullCycles;
+
+	if (hi / N != 0)
 	{
-		return t[v];
+		res += GS[N];
+		hi -= N;
 	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
+	return res + GS[hi] - GS[lo];
+
 }
 
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
+vpulli lineMap(uli k, uli N, const vulli& GS)
 {
-	if (tl == tr)
+	vpulli M(N);
+	loop(0, N, i)
 	{
-		t[v] = new_val;
+		// Exponential search
+		ulli bound = 1;
+		while (cyclicSum(i, i + bound, N, GS) < k)
+			bound *= 2;
+		ulli lo = i, hi = i + bound, mid = i, s = 0;
+		while (lo < hi)
+		{
+			mid = (lo + hi + 1) / 2;
+			s = cyclicSum(i, mid + 1, N, GS);
+			if (s == k)
+			{
+				break;
+			}
+			else if (s > k)
+			{
+				hi = mid - 1;
+			}
+			else
+			{
+				lo = mid;
+			}
+		}
+		M[i] = { mid, s };
 	}
-	else
+	return M;
+}
+
+vpulli cycles(uli N, const vpulli& P)
+{
+	vpulli C(N, { MAX(ulli), MAX(ulli) });
+	vbi visited(false);
+	loop(0, N, i)
 	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
+		if (visited[i])
+			continue;
+		visited[i] = true;
+		ulli val = P[i].second;
+		uli cur = P[i].first;
+		vuli indices(N);
+		vuli path;
+		path.reserve(N);
+		indices[i] = 0;
+		path.push_back(i);
+		while (!visited[cur])
+		{
+			indices[cur] = path.size();
+			visited[cur] = true;
+			path.push_back(i);
+			val += P[cur].second;
+			cur = P[cur].first;
+		}
+		loop(indices[cur])
+		for (uli i : path)
+		{
+			C[i].first = path.size();
+			C[i].second = val;
+		}
 	}
+	return C;
+}
+
+ulli go(uli R, uli k, uli N, vuli& G)
+{
+	vulli GS(N + 1);
+	GS[0] = G[0];
+	loop(0, N, i)
+	{
+		GS[i + 1] = GS[i] + G[i];
+	}
+	vpulli M = lineMap(k, N, GS);
+	vpulli C = cycles(N, M);
+	ulli ret = 0;
+	ulli iter = 0;
+	if (C[0].second > 0)
+		while (C[0].first + iter < R)
+		{
+
+		}
 }
 
 int main()
@@ -522,40 +571,45 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
+	ulli n;
+	cin >> n;
+	uli k; cin >> k;
+	vuli A(n);
 	loop(0, n, i)
+		cin >> A[i];
+	uli lo = 0, hi = n - 1, mid = 0;
+	while (lo < hi)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		mid = (lo + hi + 1) / 2;
+		ulli s = A[mid];
+		if (s == k)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
+			break;
+		}
+		else if (s > k)
+		{
+			hi = mid - 1;
+		}
+		else
+		{
+			lo = mid;
+		}
+	}
+	cout << A[mid] << endl;
+	return 0;
 
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
+	uli T;
+	cin >> T;
+	loop(0, T, t)
 	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+		uli R, k, N;
+		cin >> R >> k >> N;
+		vuli G(N);
+		loop(0, N, i)
+		{
+			cin >> G[i];
+		}
+		cout << "Case #" << t + 1 << ": " << go(R, k, N, G) << endl;
 	}
 
 	return 0;

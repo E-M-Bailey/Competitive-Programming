@@ -10,6 +10,7 @@
 #include <list>
 #include <map>
 #include <math.h>
+#include <numeric>
 #include <queue>
 #include <regex>
 #include <set>
@@ -462,100 +463,58 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
-{
-	ulli d;
-	ulli c;
-};
-
-const uli MAXN = 200001;
-
-lli n, t[4 * MAXN];
-
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
-	{
-		t[v] = a[tl];
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
-
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
-
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
-}
-
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	uli T;
+	cin >> T;
+	loop(0, T, t)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		cout << "Case #" << t + 1 << ": ";
+		uli N, K;
+		cin >> N >> K;
+		suli P;
+		loop(0, N, i)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+			uli p;
+			cin >> p;
+			P.insert(p - 1);
+		}
+		uli max2 = 0, max1a = 0, max1b = 0;
+		auto update = [&](uli val2, uli val1)
+		{
+			if (val2 > max2)
+				max2 = val2;
+			if (val1 > max1a)
+			{
+				max1b = max1a;
+				max1a = val1;
+			}
+			else if (val1 > max1b)
+			{
+				max1b = val1;
+			}
+		};
+		suli::iterator eIt = P.end();
+		eIt--;
+		uli minP = *P.begin(), maxP = *eIt;
+		uli vBeg = minP, vEnd = K - 1 - maxP;
+		update(vBeg, vBeg);
+		update(vEnd, vEnd);
+		uli prev = minP;
+		suli::iterator it = P.begin();
+		for (it++; it != P.end(); it++)
+		{
+			uli cur = *it;
+			uli d = cur - prev - 1;
+			update(d, (d + 1) / 2);
+			prev = cur;
+		}
+		uli max1 = max1a + max1b;
+		ldf res = (ldf)max(max1, max2) / (ldf)K;
+		cout << fixed << setprecision(numeric_limits<ldf>::max_digits10) << res << endl;
 	}
 
 	return 0;

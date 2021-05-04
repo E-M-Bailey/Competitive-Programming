@@ -68,7 +68,7 @@ inline constexpr int __builtin_ctzll(unsigned long long int value)
 
 #define tCases() uli testCaseCount; cin >> testCaseCount; for (uli testCaseIndex = 0; testCaseIndex < testCaseCount; testCaseIndex++)
 
-#define endl '\n'
+//#define endl '\n'
 
 using namespace std;
 
@@ -462,100 +462,138 @@ inline constexpr ulli gcd(ulli l, ulli r)
 	return l << s;
 }
 
-struct station
-{
-	ulli d;
-	ulli c;
-};
+//struct node
+//{
+//	uli val;
+//	bool lMin;
+//	bool rev = false;
+//
+//	void set(uli lVal, uli rVal)
+//	{
+//		lMin = lVal < rVal;
+//		val = lMin ? lVal : rVal;
+//	}
+//
+//	uli left(uli idx)
+//	{
+//		return rev ? idx * 2 + 1 : idx * 2;
+//	}
+//
+//	uli right(uli idx)
+//	{
+//		return rev ? idx * 2 : idx * 2 + 1;
+//	}
+//
+//	void reverse()
+//	{
+//		lMin = !lMin;
+//		rev = !rev;
+//	}
+//};
 
-const uli MAXN = 200001;
+//inline constexpr uli rupow2(uli x)
+//{
+//	x--;
+//	x |= x >> (1 << 0);
+//	x |= x >> (1 << 1);
+//	x |= x >> (1 << 2);
+//	x |= x >> (1 << 3);
+//	x |= x >> (1 << 4);
+//	x++;
+//	return x;
+//}
 
-lli n, t[4 * MAXN];
+//struct SegTree
+//{
+//	vector<node> nodes;
+//
+//	uli arrSize, n;
+//
+//	inline SegTree()
+//	{
+//		cin >> arrSize;
+//		n = rupow2(arrSize);
+//		nodes.resize(2 * n);
+//		loop(0, arrSize, i)
+//			cin >> nodes[n + i].val;
+//		loop(arrSize, n, i)
+//			nodes[n + i].val = MAX(uli);
+//		uli offset = n;
+//		while (offset /= 2)
+//		{
+//			loop(0, offset, i)
+//			{
+//				uli idx = offset + i;
+//				node &cur = nodes[idx], &left = nodes[cur.left(idx)], &right = nodes[cur.right(idx)];
+//				cur.set(left.val, right.val);
+//			}
+//		}
+//	}
 
-void build(lli a[], lli v, lli tl, lli tr)
-{
-	if (tl == tr)
-	{
-		t[v] = a[tl];
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		build(a, v * 2, tl, tm);
-		build(a, v * 2 + 1, tm + 1, tr);
-		t[v] = t[v * 2] + t[v * 2 + 1];
-	}
-}
+	//inline uli get(uli idx, uli curNode, uli lo, uli hi)
+	//{
 
-lli sum(lli v, lli tl, lli tr, lli l, lli r)
-{
-	if (l > r)
-		return 0;
-	if (l == tl && r == tr)
-	{
-		return t[v];
-	}
-	lli tm = (tl + tr) / 2;
-	return min(sum(v * 2, tl, tm, l, min(r, tm))
-		,sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
-}
+	//}
 
-void update(lli v, lli tl, lli tr, lli pos, lli new_val)
-{
-	if (tl == tr)
-	{
-		t[v] = new_val;
-	}
-	else
-	{
-		lli tm = (tl + tr) / 2;
-		if (pos <= tm)
-			update(v * 2, tl, tm, pos, new_val);
-		else
-			update(v * 2 + 1, tm + 1, tr, pos, new_val);
-		t[v] = min(t[v * 2], t[v * 2 + 1]);
-	}
-}
+	//inline uli get(uli idx)
+	//{
+
+	//}
+
+	//inline void set(uli idx, uli val)
+	//{
+
+	//}
+
+	//inline uli argmin(uli lo, uli hi, uli segHi, uli segLo, uli curIdx)
+	//{
+	//	if (lo == hi)
+	//		return lo;
+	//	node& cur = nodes[curIdx];
+	//	uli mid = (segLo + segHi) / 2;
+	//	return cur.lMin ? argmin(lo, mid, cur.left(curIdx)) : argmin(mid + 1, hi, cur.right(curIdx));
+	//}
+
+	//inline uli argmin()
+	//{
+	//	return argmin(0, n - 1, 1);
+	//}
+
+	//inline uli 
+//};
 
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
-	uli g;
-	cin >> n >> g;
-	vector<station> S(n);
-	lli a[MAXN];
-	loop(0, n, i)
+	uli T;
+	cin >> T;
+	loop(0, T, t)
 	{
-		cin >> S[i].d >> S[i].c;
-		a[i] = S[i].c;
-	}
-	sort(S.begin(), S.end(), [](const station& lhs, const station& rhs)
+		uli N;
+		cin >> N;
+		vuli L(N);
+		loop(0, N, i)
+			cin >> L[i];
+		uli res = 0;
+		loop(0, N - 1, i)
 		{
-			return lhs.d < rhs.d;
-		});
-	//map<ulli, uli> invD;
-	//loop(0, n, i)
-	//{
-	//	invD[S[i].d] = i;
-	//}
-
-
-	build(a, 1, 0, n - 1);
-
-	ulli l = g;
-	ulli c = 0;
-	ulli D = S[n - 1].d;
-	uli lo = 0, hi = 0;
-	while (l < D)
-	{
-		while (S[lo + 1].d <= l - g)
-			lo++;
-		while (hi < n && S[hi].d <= l)
-			hi++;
-		hi--;
-		
+			uli minVal = L[i], j = i;
+			loop(i + 1, N, k)
+			{
+				uli val = L[k];
+				if (val < minVal)
+				{
+					minVal = val;
+					j = k;
+				}
+			}
+			j++;
+			std::reverse(L.begin() + i, L.begin() + j);
+			res += j - i;
+		}
+		cout << "Case #" << t + 1 << ": " << res << endl;
 	}
 
 	return 0;
