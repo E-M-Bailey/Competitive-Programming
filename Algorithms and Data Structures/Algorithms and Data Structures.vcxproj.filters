@@ -15,23 +15,26 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Template.h">
+    <ClInclude Include="Impl In-Progress\Mergesort Inversion Count [O%28nlogn%29].h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Implementations\Mergesort Inversion Count [O%28nlogn%29].h">
+    <ClInclude Include="Impl In-Progress\All Points Closest Pair [O%28n%29 Expected].h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Implementations\All Points Closest Pair [O(n) Expected].h">
+    <ClInclude Include="Impl In-Progress\segment_tree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Test\Mergesort Inversion Count [O%28nlogn%29].cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="Impl Finished\range.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="input.txt" />
     <Text Include="output.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Test\Segment Tree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

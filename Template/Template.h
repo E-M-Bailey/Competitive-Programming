@@ -1,12 +1,14 @@
 #ifndef EMBAILEY_TEMPLATE
 #define EMBAILEY_TEMPLATE
 
+#include <chrono>
 #include <cstring>
 #include <algorithm>
 #include <array>
 #include <bitset>
 #include <deque>
 #include <forward_list>
+#include <initializer_list>
 #include <iomanip>
 #include <iostream>
 #include <limits>
@@ -15,6 +17,7 @@
 #include <math.h>
 #include <numeric>
 #include <queue>
+#include <random>
 #include <regex>
 #include <set>
 #include <sstream>
@@ -76,343 +79,371 @@ inline constexpr int __builtin_ctzll(unsigned long long int value)
 
 using namespace std;
 
-typedef bool                       bi;
-typedef char                       ci;
-typedef unsigned char              uci;
-typedef short                      si;
-typedef unsigned short             usi;
-typedef int                        li;
-typedef unsigned                   uli;
-typedef long long                  lli;
-typedef unsigned long long         ulli;
-typedef float                      sf;
-typedef double                     df;
-typedef long double                ldf;
+using bi = bool;
+using ci = char;
+using uci = unsigned char;
+using si = short;
+using usi = unsigned short;
+using li = int;
+using uli = unsigned;
+using lli = long long;
+using ulli = unsigned long long;
+using sf = float;
+using df = double;
+using ldf = long double;
 
-typedef pair<bi, bi>               pbi;
-typedef pair<ci, ci>               pci;
-typedef pair<uci, uci>             puci;
-typedef pair<si, si>               psi;
-typedef pair<usi, usi>             pusi;
-typedef pair<li, li>               pli;
-typedef pair<uli, uli>             puli;
-typedef pair<lli, lli>             plli;
-typedef pair<ulli, ulli>           pulli;
-typedef pair<sf, sf>               psf;
-typedef pair<df, df>               pdf;
-typedef pair<ldf, ldf>             pldf;
+using pbi = pair<bi, bi>;
+using pci = pair<ci, ci>;
+using puci = pair<uci, uci>;
+using psi = pair<si, si>;
+using pusi = pair<usi, usi>;
+using pli = pair<li, li>;
+using puli = pair<uli, uli>;
+using plli = pair<lli, lli>;
+using pulli = pair<ulli, ulli>;
+using psf = pair<sf, sf>;
+using pdf = pair<df, df>;
+using pldf = pair<ldf, ldf>;
 
-typedef vector<bi>                 vbi;
-typedef vector<ci>                 vci;
-typedef vector<uci>                vuci;
-typedef vector<si>                 vsi;
-typedef vector<usi>                vusi;
-typedef vector<li>                 vli;
-typedef vector<uli>                vuli;
-typedef vector<lli>                vlli;
-typedef vector<ulli>               vulli;
-typedef vector<sf>                 vsf;
-typedef vector<df>                 vdf;
-typedef vector<ldf>                vldf;
+using vbi = vector<bi>;
+using vci = vector<ci>;
+using vuci = vector<uci>;
+using vsi = vector<si>;
+using vusi = vector<usi>;
+using vli = vector<li>;
+using vuli = vector<uli>;
+using vlli = vector<lli>;
+using vulli = vector<ulli>;
+using vsf = vector<sf>;
+using vdf = vector<df>;
+using vldf = vector<ldf>;
 
-typedef vector<pbi>                vpbi;
-typedef vector<pci>                vpci;
-typedef vector<puci>               vpuci;
-typedef vector<psi>                vpsi;
-typedef vector<pusi>               vpusi;
-typedef vector<pli>                vpli;
-typedef vector<puli>               vpuli;
-typedef vector<plli>               vplli;
-typedef vector<pulli>              vpulli;
-typedef vector<psf>                vpsf;
-typedef vector<pdf>                vpdf;
-typedef vector<pldf>               vpldf;
+using vpbi = vector<pbi>;
+using vpci = vector<pci>;
+using vpuci = vector<puci>;
+using vpsi = vector<psi>;
+using vpusi = vector<pusi>;
+using vpli = vector<pli>;
+using vpuli = vector<puli>;
+using vplli = vector<plli>;
+using vpulli = vector<pulli>;
+using vpsf = vector<psf>;
+using vpdf = vector<pdf>;
+using vpldf = vector<pldf>;
 
-typedef vector<vbi>                vvbi;
-typedef vector<vci>                vvci;
-typedef vector<vuci>               vvuci;
-typedef vector<vsi>                vvsi;
-typedef vector<vusi>               vvusi;
-typedef vector<vli>                vvli;
-typedef vector<vuli>               vvuli;
-typedef vector<vlli>               vvlli;
-typedef vector<vulli>              vvulli;
-typedef vector<vsf>                vvsf;
-typedef vector<vdf>                vvdf;
-typedef vector<vldf>               vvldf;
+using vvbi = vector<vbi>;
+using vvci = vector<vci>;
+using vvuci = vector<vuci>;
+using vvsi = vector<vsi>;
+using vvusi = vector<vusi>;
+using vvli = vector<vli>;
+using vvuli = vector<vuli>;
+using vvlli = vector<vlli>;
+using vvulli = vector<vulli>;
+using vvsf = vector<vsf>;
+using vvdf = vector<vdf>;
+using vvldf = vector<vldf>;
 
-typedef vector<vpbi>               vvpbi;
-typedef vector<vpci>               vvpci;
-typedef vector<vpuci>              vvpuci;
-typedef vector<vpsi>               vvpsi;
-typedef vector<vpusi>              vvpusi;
-typedef vector<vpli>               vvpli;
-typedef vector<vpuli>              vvpuli;
-typedef vector<vplli>              vvplli;
-typedef vector<vpulli>             vvpulli;
-typedef vector<vpsf>               vvpsf;
-typedef vector<vpdf>               vvpdf;
-typedef vector<vpldf>              vvpldf;
+using vvpbi = vector<vpbi>;
+using vvpci = vector<vpci>;
+using vvpuci = vector<vpuci>;
+using vvpsi = vector<vpsi>;
+using vvpusi = vector<vpusi>;
+using vvpli = vector<vpli>;
+using vvpuli = vector<vpuli>;
+using vvplli = vector<vplli>;
+using vvpulli = vector<vpulli>;
+using vvpsf = vector<vpsf>;
+using vvpdf = vector<vpdf>;
+using vvpldf = vector<vpldf>;
 
-typedef forward_list<bi>           l1bi;
-typedef forward_list<ci>           l1ci;
-typedef forward_list<uci>          l1uci;
-typedef forward_list<si>           l1si;
-typedef forward_list<usi>          l1usi;
-typedef forward_list<li>           l1li;
-typedef forward_list<uli>          l1uli;
-typedef forward_list<lli>          l1lli;
-typedef forward_list<ulli>         l1ulli;
-typedef forward_list<sf>           l1sf;
-typedef forward_list<df>           l1df;
-typedef forward_list<ldf>          l1ldf;
+using vvvbi = vector<vvbi>;
+using vvvci = vector<vvci>;
+using vvvuci = vector<vvuci>;
+using vvvsi = vector<vvsi>;
+using vvvusi = vector<vvusi>;
+using vvvli = vector<vvli>;
+using vvvuli = vector<vvuli>;
+using vvvlli = vector<vvlli>;
+using vvvulli = vector<vvulli>;
+using vvvsf = vector<vvsf>;
+using vvvdf = vector<vvdf>;
+using vvvldf = vector<vvldf>;
 
-typedef forward_list<pbi>          l1pbi;
-typedef forward_list<pci>          l1pci;
-typedef forward_list<puci>         l1puci;
-typedef forward_list<psi>          l1psi;
-typedef forward_list<pusi>         l1pusi;
-typedef forward_list<pli>          l1pli;
-typedef forward_list<puli>         l1puli;
-typedef forward_list<plli>         l1plli;
-typedef forward_list<pulli>        l1pulli;
-typedef forward_list<psf>          l1psf;
-typedef forward_list<pdf>          l1pdf;
-typedef forward_list<pldf>         l1pldf;
+using vvvpbi = vector<vvpbi>;
+using vvvpci = vector<vvpci>;
+using vvvpuci = vector<vvpuci>;
+using vvvpsi = vector<vvpsi>;
+using vvvpusi = vector<vvpusi>;
+using vvvpli = vector<vvpli>;
+using vvvpuli = vector<vvpuli>;
+using vvvplli = vector<vvplli>;
+using vvvpulli = vector<vvpulli>;
+using vvvpsf = vector<vvpsf>;
+using vvvpdf = vector<vvpdf>;
+using vvvpldf = vector<vvpldf>;
 
-typedef list<bi>                   l2bi;
-typedef list<ci>                   l2ci;
-typedef list<uci>                  l2uci;
-typedef list<si>                   l2si;
-typedef list<usi>                  l2usi;
-typedef list<li>                   l2li;
-typedef list<uli>                  l2uli;
-typedef list<lli>                  l2lli;
-typedef list<ulli>                 l2ulli;
-typedef list<sf>                   l2sf;
-typedef list<df>                   l2df;
-typedef list<ldf>                  l2ldf;
+using l1bi = forward_list<bi>;
+using l1ci = forward_list<ci>;
+using l1uci = forward_list<uci>;
+using l1si = forward_list<si>;
+using l1usi = forward_list<usi>;
+using l1li = forward_list<li>;
+using l1uli = forward_list<uli>;
+using l1lli = forward_list<lli>;
+using l1ulli = forward_list<ulli>;
+using l1sf = forward_list<sf>;
+using l1df = forward_list<df>;
+using l1ldf = forward_list<ldf>;
 
-typedef list<pbi>                  l2pbi;
-typedef list<pci>                  l2pci;
-typedef list<puci>                 l2puci;
-typedef list<psi>                  l2psi;
-typedef list<pusi>                 l2pusi;
-typedef list<pli>                  l2pli;
-typedef list<puli>                 l2puli;
-typedef list<plli>                 l2plli;
-typedef list<pulli>                l2pulli;
-typedef list<psf>                  l2psf;
-typedef list<pdf>                  l2pdf;
-typedef list<pldf>                 l2pldf;
+using l1pbi = forward_list<pbi>;
+using l1pci = forward_list<pci>;
+using l1puci = forward_list<puci>;
+using l1psi = forward_list<psi>;
+using l1pusi = forward_list<pusi>;
+using l1pli = forward_list<pli>;
+using l1puli = forward_list<puli>;
+using l1plli = forward_list<plli>;
+using l1pulli = forward_list<pulli>;
+using l1psf = forward_list<psf>;
+using l1pdf = forward_list<pdf>;
+using l1pldf = forward_list<pldf>;
 
-typedef set<bi>                    sbi;
-typedef set<ci>                    sci;
-typedef set<uci>                   suci;
-typedef set<si>                    ssi;
-typedef set<usi>                   susi;
-typedef set<li>                    sli;
-typedef set<uli>                   suli;
-typedef set<lli>                   slli;
-typedef set<ulli>                  sulli;
-typedef set<sf>                    ssf;
-typedef set<df>                    sdf;
-typedef set<ldf>                   sldf;
+using l2bi = list<bi>;
+using l2ci = list<ci>;
+using l2uci = list<uci>;
+using l2si = list<si>;
+using l2usi = list<usi>;
+using l2li = list<li>;
+using l2uli = list<uli>;
+using l2lli = list<lli>;
+using l2ulli = list<ulli>;
+using l2sf = list<sf>;
+using l2df = list<df>;
+using l2ldf = list<ldf>;
 
-typedef set<pbi>                   spbi;
-typedef set<pci>                   spci;
-typedef set<puci>                  spuci;
-typedef set<psi>                   spsi;
-typedef set<pusi>                  spusi;
-typedef set<pli>                   spli;
-typedef set<puli>                  spuli;
-typedef set<plli>                  splli;
-typedef set<pulli>                 spulli;
-typedef set<psf>                   spsf;
-typedef set<pdf>                   spdf;
-typedef set<pldf>                  spldf;
+using l2pbi = list<pbi>;
+using l2pci = list<pci>;
+using l2puci = list<puci>;
+using l2psi = list<psi>;
+using l2pusi = list<pusi>;
+using l2pli = list<pli>;
+using l2puli = list<puli>;
+using l2plli = list<plli>;
+using l2pulli = list<pulli>;
+using l2psf = list<psf>;
+using l2pdf = list<pdf>;
+using l2pldf = list<pldf>;
 
-typedef multiset<bi>               msbi;
-typedef multiset<ci>               msci;
-typedef multiset<uci>              msuci;
-typedef multiset<si>               mssi;
-typedef multiset<usi>              msusi;
-typedef multiset<li>               msli;
-typedef multiset<uli>              msuli;
-typedef multiset<lli>              mslli;
-typedef multiset<ulli>             msulli;
-typedef multiset<sf>               mssf;
-typedef multiset<df>               msdf;
-typedef multiset<ldf>              msldf;
+template<typename Pred = less<bi>> using sbi = set<bi, Pred>;
+template<typename Pred = less<ci>> using sci = set<ci, Pred>;
+template<typename Pred = less<uci>> using suci = set<uci, Pred>;
+template<typename Pred = less<si>> using ssi = set<si, Pred>;
+template<typename Pred = less<usi>> using susi = set<usi, Pred>;
+template<typename Pred = less<li>> using sli = set<li, Pred>;
+template<typename Pred = less<uli>> using suli = set<uli, Pred>;
+template<typename Pred = less<lli>> using slli = set<lli, Pred>;
+template<typename Pred = less<ulli>> using sulli = set<ulli, Pred>;
+template<typename Pred = less<sf>> using ssf = set<sf, Pred>;
+template<typename Pred = less<df>> using sdf = set<df, Pred>;
+template<typename Pred = less<ldf>> using sldf = set<ldf, Pred>;
 
-typedef multiset<pbi>              mspbi;
-typedef multiset<pci>              mspci;
-typedef multiset<puci>             mspuci;
-typedef multiset<psi>              mspsi;
-typedef multiset<pusi>             mspusi;
-typedef multiset<pli>              mspli;
-typedef multiset<puli>             mspuli;
-typedef multiset<plli>             msplli;
-typedef multiset<pulli>            mspulli;
-typedef multiset<psf>              mspsf;
-typedef multiset<pdf>              mspdf;
-typedef multiset<pldf>             mspldf;
+template<typename Pred = less<pbi>> using spbi = set<pbi, Pred>;
+template<typename Pred = less<pci>> using spci = set<pci, Pred>;
+template<typename Pred = less<puci>> using spuci = set<puci, Pred>;
+template<typename Pred = less<psi>> using spsi = set<psi, Pred>;
+template<typename Pred = less<pusi>> using spusi = set<pusi, Pred>;
+template<typename Pred = less<pli>> using spli = set<pli, Pred>;
+template<typename Pred = less<puli>> using spuli = set<puli, Pred>;
+template<typename Pred = less<plli>> using splli = set<plli, Pred>;
+template<typename Pred = less<pulli>> using spulli = set<pulli, Pred>;
+template<typename Pred = less<psf>> using spsf = set<psf, Pred>;
+template<typename Pred = less<pdf>> using spdf = set<pdf, Pred>;
+template<typename Pred = less<pldf>> using spldf = set<pldf, Pred>;
 
-typedef unordered_multiset<bi>     umsbi;
-typedef unordered_multiset<ci>     umsci;
-typedef unordered_multiset<uci>    umsuci;
-typedef unordered_multiset<si>     umssi;
-typedef unordered_multiset<usi>    umsusi;
-typedef unordered_multiset<li>     umsli;
-typedef unordered_multiset<uli>    umsuli;
-typedef unordered_multiset<lli>    umslli;
-typedef unordered_multiset<ulli>   umsulli;
-typedef unordered_multiset<sf>     umssf;
-typedef unordered_multiset<df>     umsdf;
-typedef unordered_multiset<ldf>    umsldf;
+template<typename Pred = less<bi>> using msbi = multiset<bi, Pred>;
+template<typename Pred = less<ci>> using msci = multiset<ci, Pred>;
+template<typename Pred = less<uci>> using msuci = multiset<uci, Pred>;
+template<typename Pred = less<si>> using mssi = multiset<si, Pred>;
+template<typename Pred = less<usi>> using msusi = multiset<usi, Pred>;
+template<typename Pred = less<li>> using msli = multiset<li, Pred>;
+template<typename Pred = less<uli>> using msuli = multiset<uli, Pred>;
+template<typename Pred = less<lli>> using mslli = multiset<lli, Pred>;
+template<typename Pred = less<ulli>> using msulli = multiset<ulli, Pred>;
+template<typename Pred = less<sf>> using mssf = multiset<sf, Pred>;
+template<typename Pred = less<df>> using msdf = multiset<df, Pred>;
+template<typename Pred = less<ldf>> using msldf = multiset<ldf, Pred>;
 
-typedef unordered_multiset<pbi>    umspbi;
-typedef unordered_multiset<pci>    umspci;
-typedef unordered_multiset<puci>   umspuci;
-typedef unordered_multiset<psi>    umspsi;
-typedef unordered_multiset<pusi>   umspusi;
-typedef unordered_multiset<pli>    umspli;
-typedef unordered_multiset<puli>   umspuli;
-typedef unordered_multiset<plli>   umsplli;
-typedef unordered_multiset<pulli>  umspulli;
-typedef unordered_multiset<psf>    umspsf;
-typedef unordered_multiset<pdf>    umspdf;
-typedef unordered_multiset<pldf>   umspldf;
+template<typename Pred = less<pbi>> using mspbi = multiset<pbi, Pred>;
+template<typename Pred = less<pci>> using mspci = multiset<pci, Pred>;
+template<typename Pred = less<puci>> using mspuci = multiset<puci, Pred>;
+template<typename Pred = less<psi>> using mspsi = multiset<psi, Pred>;
+template<typename Pred = less<pusi>> using mspusi = multiset<pusi, Pred>;
+template<typename Pred = less<pli>> using mspli = multiset<pli, Pred>;
+template<typename Pred = less<puli>> using mspuli = multiset<puli, Pred>;
+template<typename Pred = less<plli>> using msplli = multiset<plli, Pred>;
+template<typename Pred = less<pulli>> using mspulli = multiset<pulli, Pred>;
+template<typename Pred = less<psf>> using mspsf = multiset<psf, Pred>;
+template<typename Pred = less<pdf>> using mspdf = multiset<pdf, Pred>;
+template<typename Pred = less<pldf>> using mspldf = multiset<pldf, Pred>;
 
-typedef unordered_set<bi>          usbi;
-typedef unordered_set<ci>          usci;
-typedef unordered_set<uci>         usuci;
-typedef unordered_set<si>          ussi;
-typedef unordered_set<usi>         ususi;
-typedef unordered_set<li>          usli;
-typedef unordered_set<uli>         usuli;
-typedef unordered_set<lli>         uslli;
-typedef unordered_set<ulli>        usulli;
-typedef unordered_set<sf>          ussf;
-typedef unordered_set<df>          usdf;
-typedef unordered_set<ldf>         usldf;
+using usbi = unordered_set<bi>;
+using usci = unordered_set<ci>;
+using usuci = unordered_set<uci>;
+using ussi = unordered_set<si>;
+using ususi = unordered_set<usi>;
+using usli = unordered_set<li>;
+using usuli = unordered_set<uli>;
+using uslli = unordered_set<lli>;
+using usulli = unordered_set<ulli>;
+using ussf = unordered_set<sf>;
+using usdf = unordered_set<df>;
+using usldf = unordered_set<ldf>;
 
-typedef unordered_set<pbi>         uspbi;
-typedef unordered_set<pci>         uspci;
-typedef unordered_set<puci>        uspuci;
-typedef unordered_set<psi>         uspsi;
-typedef unordered_set<pusi>        uspusi;
-typedef unordered_set<pli>         uspli;
-typedef unordered_set<puli>        uspuli;
-typedef unordered_set<plli>        usplli;
-typedef unordered_set<pulli>       uspulli;
-typedef unordered_set<psf>         uspsf;
-typedef unordered_set<pdf>         uspdf;
-typedef unordered_set<pldf>        uspldf;
+using uspbi = unordered_set<pbi>;
+using uspci = unordered_set<pci>;
+using uspuci = unordered_set<puci>;
+using uspsi = unordered_set<psi>;
+using uspusi = unordered_set<pusi>;
+using uspli = unordered_set<pli>;
+using uspuli = unordered_set<puli>;
+using usplli = unordered_set<plli>;
+using uspulli = unordered_set<pulli>;
+using uspsf = unordered_set<psf>;
+using uspdf = unordered_set<pdf>;
+using uspldf = unordered_set<pldf>;
 
-typedef stack<bi>                  stbi;
-typedef stack<ci>                  stci;
-typedef stack<uci>                 stuci;
-typedef stack<si>                  stsi;
-typedef stack<usi>                 stusi;
-typedef stack<li>                  stli;
-typedef stack<uli>                 stuli;
-typedef stack<lli>                 stlli;
-typedef stack<ulli>                stulli;
-typedef stack<sf>                  stsf;
-typedef stack<df>                  stdf;
-typedef stack<ldf>                 stldf;
+using umsbi = unordered_multiset<bi>;
+using umsci = unordered_multiset<ci>;
+using umsuci = unordered_multiset<uci>;
+using umssi = unordered_multiset<si>;
+using umsusi = unordered_multiset<usi>;
+using umsli = unordered_multiset<li>;
+using umsuli = unordered_multiset<uli>;
+using umslli = unordered_multiset<lli>;
+using umsulli = unordered_multiset<ulli>;
+using umssf = unordered_multiset<sf>;
+using umsdf = unordered_multiset<df>;
+using umsldf = unordered_multiset<ldf>;
 
-typedef stack<pbi>                 stpbi;
-typedef stack<pci>                 stpci;
-typedef stack<puci>                stpuci;
-typedef stack<psi>                 stpsi;
-typedef stack<pusi>                stpusi;
-typedef stack<pli>                 stpli;
-typedef stack<puli>                stpuli;
-typedef stack<plli>                stplli;
-typedef stack<pulli>               stpulli;
-typedef stack<psf>                 stpsf;
-typedef stack<pdf>                 stpdf;
-typedef stack<pldf>                stpldf;
+using umspbi = unordered_multiset<pbi>;
+using umspci = unordered_multiset<pci>;
+using umspuci = unordered_multiset<puci>;
+using umspsi = unordered_multiset<psi>;
+using umspusi = unordered_multiset<pusi>;
+using umspli = unordered_multiset<pli>;
+using umspuli = unordered_multiset<puli>;
+using umsplli = unordered_multiset<plli>;
+using umspulli = unordered_multiset<pulli>;
+using umspsf = unordered_multiset<psf>;
+using umspdf = unordered_multiset<pdf>;
+using umspldf = unordered_multiset<pldf>;
 
-typedef queue<bi>                  qbi;
-typedef queue<ci>                  qci;
-typedef queue<uci>                 quci;
-typedef queue<si>                  qsi;
-typedef queue<usi>                 qusi;
-typedef queue<li>                  qli;
-typedef queue<uli>                 quli;
-typedef queue<lli>                 qlli;
-typedef queue<ulli>                qulli;
-typedef queue<sf>                  qsf;
-typedef queue<df>                  qdf;
-typedef queue<ldf>                 qldf;
+using stbi = stack<bi>;
+using stci = stack<ci>;
+using stuci = stack<uci>;
+using stsi = stack<si>;
+using stusi = stack<usi>;
+using stli = stack<li>;
+using stuli = stack<uli>;
+using stlli = stack<lli>;
+using stulli = stack<ulli>;
+using stsf = stack<sf>;
+using stdf = stack<df>;
+using stldf = stack<ldf>;
 
-typedef queue<pbi>                 qpbi;
-typedef queue<pci>                 qpci;
-typedef queue<puci>                qpuci;
-typedef queue<psi>                 qpsi;
-typedef queue<pusi>                qpusi;
-typedef queue<pli>                 qpli;
-typedef queue<puli>                qpuli;
-typedef queue<plli>                qplli;
-typedef queue<pulli>               qpulli;
-typedef queue<psf>                 qpsf;
-typedef queue<pdf>                 qpdf;
-typedef queue<pldf>                qpldf;
+using stpbi = stack<pbi>;
+using stpci = stack<pci>;
+using stpuci = stack<puci>;
+using stpsi = stack<psi>;
+using stpusi = stack<pusi>;
+using stpli = stack<pli>;
+using stpuli = stack<puli>;
+using stplli = stack<plli>;
+using stpulli = stack<pulli>;
+using stpsf = stack<psf>;
+using stpdf = stack<pdf>;
+using stpldf = stack<pldf>;
 
-typedef deque<bi>                  dbi;
-typedef deque<ci>                  dci;
-typedef deque<uci>                 duci;
-typedef deque<si>                  dsi;
-typedef deque<usi>                 dusi;
-typedef deque<li>                  dli;
-typedef deque<uli>                 duli;
-typedef deque<lli>                 dlli;
-typedef deque<ulli>                dulli;
-typedef deque<sf>                  dsf;
-typedef deque<df>                  ddf;
-typedef deque<ldf>                 dldf;
+using qbi = queue<bi>;
+using qci = queue<ci>;
+using quci = queue<uci>;
+using qsi = queue<si>;
+using qusi = queue<usi>;
+using qli = queue<li>;
+using quli = queue<uli>;
+using qlli = queue<lli>;
+using qulli = queue<ulli>;
+using qsf = queue<sf>;
+using qdf = queue<df>;
+using qldf = queue<ldf>;
 
-typedef deque<pbi>                 dpbi;
-typedef deque<pci>                 dpci;
-typedef deque<puci>                dpuci;
-typedef deque<psi>                 dpsi;
-typedef deque<pusi>                dpusi;
-typedef deque<pli>                 dpli;
-typedef deque<puli>                dpuli;
-typedef deque<plli>                dplli;
-typedef deque<pulli>               dpulli;
-typedef deque<psf>                 dpsf;
-typedef deque<pdf>                 dpdf;
-typedef deque<pldf>                dpldf;
+using qpbi = queue<pbi>;
+using qpci = queue<pci>;
+using qpuci = queue<puci>;
+using qpsi = queue<psi>;
+using qpusi = queue<pusi>;
+using qpli = queue<pli>;
+using qpuli = queue<puli>;
+using qplli = queue<plli>;
+using qpulli = queue<pulli>;
+using qpsf = queue<psf>;
+using qpdf = queue<pdf>;
+using qpldf = queue<pldf>;
 
-typedef priority_queue<bi>         pqbi;
-typedef priority_queue<ci>         pqci;
-typedef priority_queue<uci>        pquci;
-typedef priority_queue<si>         pqsi;
-typedef priority_queue<usi>        pqusi;
-typedef priority_queue<li>         pqli;
-typedef priority_queue<uli>        pquli;
-typedef priority_queue<lli>        pqlli;
-typedef priority_queue<ulli>       pqulli;
-typedef priority_queue<sf>         pqsf;
-typedef priority_queue<df>         pqdf;
-typedef priority_queue<ldf>        pqldf;
+using dbi = deque<bi>;
+using dci = deque<ci>;
+using duci = deque<uci>;
+using dsi = deque<si>;
+using dusi = deque<usi>;
+using dli = deque<li>;
+using duli = deque<uli>;
+using dlli = deque<lli>;
+using dulli = deque<ulli>;
+using dsf = deque<sf>;
+using ddf = deque<df>;
+using dldf = deque<ldf>;
 
-typedef priority_queue<pbi>        pqpbi;
-typedef priority_queue<pci>        pqpci;
-typedef priority_queue<puci>       pqpuci;
-typedef priority_queue<psi>        pqpsi;
-typedef priority_queue<pusi>       pqpusi;
-typedef priority_queue<pli>        pqpli;
-typedef priority_queue<puli>       pqpuli;
-typedef priority_queue<plli>       pqplli;
-typedef priority_queue<pulli>      pqpulli;
-typedef priority_queue<psf>        pqpsf;
-typedef priority_queue<pdf>        pqpdf;
-typedef priority_queue<pldf>       pqpldf;
+using dpbi = deque<pbi>;
+using dpci = deque<pci>;
+using dpuci = deque<puci>;
+using dpsi = deque<psi>;
+using dpusi = deque<pusi>;
+using dpli = deque<pli>;
+using dpuli = deque<puli>;
+using dplli = deque<plli>;
+using dpulli = deque<pulli>;
+using dpsf = deque<psf>;
+using dpdf = deque<pdf>;
+using dpldf = deque<pldf>;
+
+using pqbi = priority_queue<bi>;
+using pqci = priority_queue<ci>;
+using pquci = priority_queue<uci>;
+using pqsi = priority_queue<si>;
+using pqusi = priority_queue<usi>;
+using pqli = priority_queue<li>;
+using pquli = priority_queue<uli>;
+using pqlli = priority_queue<lli>;
+using pqulli = priority_queue<ulli>;
+using pqsf = priority_queue<sf>;
+using pqdf = priority_queue<df>;
+using pqldf = priority_queue<ldf>;
+
+using pqpbi = priority_queue<pbi>;
+using pqpci = priority_queue<pci>;
+using pqpuci = priority_queue<puci>;
+using pqpsi = priority_queue<psi>;
+using pqpusi = priority_queue<pusi>;
+using pqpli = priority_queue<pli>;
+using pqpuli = priority_queue<puli>;
+using pqplli = priority_queue<plli>;
+using pqpulli = priority_queue<pulli>;
+using pqpsf = priority_queue<psf>;
+using pqpdf = priority_queue<pdf>;
+using pqpldf = priority_queue<pldf>;
+
+// ^^^^ TODO INCLUDE TEMPLATES HERE ^^^^ //
 
 template<class T, class Container = vector<T>>
 using max_heap = priority_queue<T, Container, less<T>>;
@@ -437,406 +468,758 @@ template<size_t I>
 struct TupleReadHelper
 {
 	template<typename... Ts>
-	static inline void read(tuple<Ts...>& c);
+	static inline void read(tuple<Ts...>& c, istream& strm);
 	template<typename... Ts>
-	static inline void read(tuple<Ts&...>&& c);
+	static inline void read(tuple<Ts&...>&& c, istream& strm);
 };
 
 template<>
 struct TupleReadHelper<0>
 {
 	template<typename... Ts>
-	static inline void read(tuple<Ts...>& c) {}
+	static inline void read(tuple<Ts...>& c, istream& strm) {}
 	template<typename... Ts>
-	static inline void read(tuple<Ts&...>&& c) {}
+	static inline void read(tuple<Ts&...>&& c, istream& strm) {}
+};
+
+template<size_t I>
+struct TupleReadNHelper
+{
+	template<typename... Ts>
+	static inline void read(tuple<Ts...>& t, istream& strm);
+	template<typename... Ts, typename... S>
+	static inline void read(tuple<Ts...>& t, istream& strm, size_t n, S... s);
+};
+
+template<>
+struct TupleReadNHelper<0>
+{
+	template<typename... Ts, typename... S>
+	static inline void read(tuple<Ts...>&, istream& strm, S...) {}
 };
 
 template<typename Iter>
 inline void read_rng(Iter first, Iter last);
+template<typename Iter>
+inline void read_rng(Iter first, Iter last, istream& strm);
 
 template<typename T>
-inline void read(T& t)
+inline void read(T& t, istream& strm)
 {
-	cin >> t;
+	strm >> t;
 }
 
 template<typename T, typename U>
-inline void read(pair<T, U>& c)
+inline void read(pair<T, U>& c, istream& strm)
 {
-	read(c.first);
-	read(c.second);
+	read(c.first, strm);
+	read(c.second, strm);
 }
 
 template<typename... Ts>
-inline void read(tuple<Ts...>& c)
+inline void read(tuple<Ts...>& c, istream& strm)
 {
-	TupleReadHelper<tuple_size<tuple<Ts...>>::value>::read(c);
+	TupleReadHelper<tuple_size<tuple<Ts...>>::value>::read(c, strm);
 }
 
 template<typename... Ts>
-inline void read(tuple<Ts&...>&& c)
+inline void read(tuple<Ts&...>&& c, istream& strm)
 {
-	TupleReadHelper<tuple_size<tuple<Ts...>>::value>::read(c);
+	TupleReadHelper<tuple_size<tuple<Ts...>>::value>::read(c, strm);
 }
 
 template<typename T, size_t Size>
-inline void read(array<T, Size>& c)
+inline void read(array<T, Size>& c, istream& strm)
 {
-	read_rng(ALL(c));
+	read_rng(ALL(c), strm);
 }
 
 template<typename T, typename Alloc>
-inline void read(vector<T, Alloc>& c)
+inline void read(vector<T, Alloc>& c, istream& strm)
 {
-	read_rng(ALL(c));
+	read_rng(ALL(c), strm);
 }
 
 template<typename T, typename Alloc>
-inline void read(deque<T, Alloc>& c)
+inline void read(deque<T, Alloc>& c, istream& strm)
 {
-	read_rng(ALL(c));
+	read_rng(ALL(c), strm);
 }
 
 template<typename T, typename Alloc>
-inline void read(list<T, Alloc>& c)
+inline void read(list<T, Alloc>& c, istream& strm)
 {
-	read_rng(ALL(c));
+	read_rng(ALL(c), strm);
 }
 
 template<typename T, typename Alloc>
-inline void read(forward_list<T, Alloc>& c)
+inline void read(forward_list<T, Alloc>& c, istream& strm)
 {
-	read_rng(ALL(c));
-}
-
-template<size_t I>
-template<typename... Ts>
-inline void TupleReadHelper<I>::read(tuple<Ts...>& c)
-{
-	TupleReadHelper<I - 1>::read(c);
-	::read(get<I - 1>(c));
-}
-
-template<size_t I>
-template<typename... Ts>
-inline void TupleReadHelper<I>::read(tuple<Ts&...>&& c)
-{
-	TupleReadHelper<I - 1>::read(c);
-	::read(get<I - 1>(c));
+	read_rng(ALL(c), strm);
 }
 
 template<typename T>
-inline T read()
+inline void read(T t)
+{
+	read(t, cin);
+}
+
+template<size_t I>
+template<typename... Ts>
+inline void TupleReadHelper<I>::read(tuple<Ts...>& c, istream& strm)
+{
+	TupleReadHelper<I - 1>::read(c, strm);
+	::read(get<I - 1>(c), strm);
+}
+
+template<size_t I>
+template<typename... Ts>
+inline void TupleReadHelper<I>::read(tuple<Ts&...>&& c, istream& strm)
+{
+	TupleReadHelper<I - 1>::read(c, strm);
+	::read(get<I - 1>(c), strm);
+}
+
+template<typename T>
+inline T readr(istream& strm)
 {
 	T t;
-	::read(t);
+	::read(t, strm);
 	return t;
 }
 
+template<typename T>
+inline T readr()
+{
+	return readr<T>(cin);
+}
+
 template<typename Iter>
-inline void read_rng(Iter first, Iter last)
+inline void read_rng(Iter first, Iter last, istream& strm)
 {
 	while (first != last)
-		read(*(first++));
+		read(*(first++), strm);
+}
+
+template<typename T>
+struct ReadNHelper
+{
+	static inline T read(istream& strm)
+	{
+		return ::readr<T>();
+	}
+
+	template<typename... S>
+	static inline T read(istream& strm, size_t n, S... s)
+	{
+		return ReadNHelper<T>::read(strm, s...);
+	}
+};
+
+template<typename T, typename U>
+struct ReadNHelper<pair<T, U>>
+{
+	static inline pair<T, U> read(istream& strm)
+	{
+		pair<T, U> c;
+		c.first = ReadNHelper<T>::read(strm);
+		c.second = ReadNHelper<U>::read(strm);
+		return c;
+	}
+
+	template<typename... S>
+	static inline pair<T, U> read(istream& strm, size_t n, S... s)
+	{
+		pair<T, U> c;
+		c.first = ReadNHelper<T>::read(strm, s...);
+		c.second = ReadNHelper<U>::read(strm, s...);
+		return c;
+	}
+};
+
+template<typename... Ts>
+struct ReadNHelper<tuple<Ts...>>
+{
+	static inline tuple<Ts...> read(istream& strm)
+	{
+		tuple<Ts...> c;
+		TupleReadNHelper<tuple_size<tuple<Ts...>>::value>::read(c, strm);
+		return c;
+	}
+
+	template<typename... S>
+	static inline tuple<Ts...> read(istream& strm, size_t n, S... s)
+	{
+		tuple<Ts...> c;
+		TupleReadNHelper<tuple_size<tuple<Ts...>>::value>::read(c, strm, n, s...);
+		return c;
+	}
+};
+
+template<typename T, size_t Size>
+struct ReadNHelper<array<T, Size>>
+{
+	static inline array<T, Size> read(istream& strm)
+	{
+		array<T, Size> c;
+		for (size_t i = Size; i--;) c[i] = ReadNHelper<T>::read(strm);
+		return c;
+	}
+
+	template<typename... S>
+	static inline array<T, Size> read(istream& strm, size_t n, S... s)
+	{
+		array<T, Size> c;
+		for (size_t i = Size; i--;) c[i] = ReadNHelper<T>::read(strm, s...);
+		return c;
+	}
+};
+
+template<typename T, typename Alloc>
+struct ReadNHelper<vector<T, Alloc>>
+{
+	static inline vector<T, Alloc> read(istream& strm)
+	{
+		//static_assert(false, "size needed for read_n<vector>.");
+	}
+
+	template<typename... S>
+	static inline vector<T, Alloc> read(istream& strm, size_t n, S... s)
+	{
+		vector<T, Alloc> c;
+		c.reserve(n);
+		while (n--) c.push_back(ReadNHelper<T>::read(strm, s...));
+		return c;
+	}
+};
+
+template<typename T, typename Alloc>
+struct ReadNHelper<deque<T, Alloc>>
+{
+	static inline deque<T, Alloc> read(istream& strm)
+	{
+		//static_assert(false, "size needed for read_n<deque>.");
+	}
+
+	template<typename... S>
+	static inline deque<T, Alloc> read(istream& strm, size_t n, S... s)
+	{
+		deque<T, Alloc> c;
+		while (n--) c.push_back(ReadNHelper<T>::read(strm, s...));
+		return c;
+	}
+};
+
+template<typename T, typename Alloc>
+struct ReadNHelper<list<T, Alloc>>
+{
+	static inline list<T, Alloc> read(istream& strm)
+	{
+		//static_assert(false, "size needed for read_n<list>.");
+	}
+
+	template<typename... S>
+	static inline list<T, Alloc> read(istream& strm, size_t n, S... s)
+	{
+		list<T, Alloc> c;
+		while (n--) c.push_back(ReadNHelper<T>::read(strm, s...));
+		return c;
+	}
+};
+
+template<typename T, typename Alloc>
+struct ReadNHelper<forward_list<T, Alloc>>
+{
+	static inline forward_list<T, Alloc> read(istream& strm)
+	{
+		//static_assert(false, "size needed for read_n<forward_list>.");
+	}
+
+	template<typename... S>
+	static inline forward_list<T, Alloc> read(istream& strm, size_t n, S... s)
+	{
+		forward_list<T, Alloc> c;
+		typename forward_list<T, Alloc>::const_iterator itr = c.cbefore_begin();
+		while (n--)
+		{
+			c.insert_after(itr, ReadNHelper<T>::read(strm, s...));
+			itr++;
+		}
+		return c;
+	}
+};
+
+template<typename T, typename Pr, typename Alloc>
+struct ReadNHelper<set<T, Pr, Alloc>>
+{
+	static inline set<T, Pr, Alloc> read(istream& strm)
+	{
+		//static_assert(false, "size needed for read_n<set>.");
+	}
+
+	template<typename... S>
+	static inline set<T, Pr, Alloc> read(istream& strm, size_t n, S... s)
+	{
+		set<T, Pr, Alloc> c;
+		while (n--) c.insert(ReadNHelper<T>::read(strm, s...));
+		return c;
+	}
+};
+
+template<typename T, typename Pr, typename Alloc>
+struct ReadNHelper<multiset<T, Pr, Alloc>>
+{
+	static inline multiset<T, Pr, Alloc> read(istream& strm)
+	{
+		//static_assert(false, "size needed for read_n<multiset>.");
+	}
+
+	template<typename... S>
+	static inline multiset<T, Pr, Alloc> read(istream& strm, size_t n, S... s)
+	{
+		multiset<T, Pr, Alloc> c;
+		while (n--) c.insert(ReadNHelper<T>::read(strm, s...));
+		return c;
+	}
+};
+
+template<typename T, typename Hash, typename Eq, typename Alloc>
+struct ReadNHelper<unordered_set<T, Hash, Eq, Alloc>>
+{
+	static inline unordered_set<T, Hash, Eq, Alloc> read(istream& strm)
+	{
+		//static_assert(false, "size needed for read_n<unordered_set>.");
+	}
+
+	template<typename... S>
+	static inline unordered_set<T, Hash, Eq, Alloc> read(istream& strm, size_t n, S... s)
+	{
+		unordered_set<T, Hash, Eq, Alloc> c;
+		while (n--) c.insert(ReadNHelper<T>::read(strm, s...));
+		return c;
+	}
+};
+
+template<typename T, typename Hash, typename Eq, typename Alloc>
+struct ReadNHelper<unordered_multiset<T, Hash, Eq, Alloc>>
+{
+	static inline unordered_multiset<T, Hash, Eq, Alloc> read(istream& strm)
+	{
+		//static_assert(false, "size needed for read_n<unordered_multiset>.");
+	}
+
+	template<typename... S>
+	static inline unordered_multiset<T, Hash, Eq, Alloc> read(istream& strm, size_t n, S... s)
+	{
+		unordered_multiset<T, Hash, Eq, Alloc> c;
+		while (n--) c.insert(ReadNHelper<T>::read(strm, s...));
+		return c;
+	}
+};
+
+template<typename K, typename V, typename Pr, typename Alloc>
+struct ReadNHelper<map<K, V, Pr, Alloc>>
+{
+	static inline map<K, V, Pr, Alloc> read(istream& strm)
+	{
+		//static_assert(false, "size needed for read_n<map>.");
+	}
+
+	template<typename... S>
+	static inline map<K, V, Pr, Alloc> read(istream& strm, size_t n, S... s)
+	{
+		map<K, V, Pr, Alloc> c;
+		while (n--) c.insert(ReadNHelper<pair<K, V>>::read(strm, s...));
+		return c;
+	}
+};
+
+template<typename K, typename V, typename Pr, typename Alloc>
+struct ReadNHelper<multimap<K, V, Pr, Alloc>>
+{
+	static inline multimap<K, V, Pr, Alloc> read(istream& strm)
+	{
+		//static_assert(false, "size needed for read_n<multimap>.");
+	}
+
+	template<typename... S>
+	static inline multimap<K, V, Pr, Alloc> read(istream& strm, size_t n, S... s)
+	{
+		multimap<K, V, Pr, Alloc> c;
+		while (n--) c.insert(ReadNHelper<pair<K, V>>::read(strm, s...));
+		return c;
+	}
+};
+
+template<typename K, typename V, typename Hash, typename Eq, typename Alloc>
+struct ReadNHelper<unordered_map<K, V, Hash, Eq, Alloc>>
+{
+	static inline unordered_map<K, V, Hash, Eq, Alloc> read(istream& strm)
+	{
+		//static_assert(false, "size needed for read_n<unordered_map>.");
+	}
+
+	template<typename... S>
+	static inline unordered_map<K, V, Hash, Eq, Alloc> read(istream& strm, size_t n, S... s)
+	{
+		unordered_map<K, V, Hash, Eq, Alloc> c;
+		while (n--) c.insert(ReadNHelper<pair<K, V>>::read(strm, s...));
+		return c;
+	}
+};
+
+template<typename K, typename V, typename Hash, typename Eq, typename Alloc>
+struct ReadNHelper<unordered_multimap<K, V, Hash, Eq, Alloc>>
+{
+	static inline unordered_multimap<K, V, Hash, Eq, Alloc> read(istream& strm)
+	{
+		//static_assert(false, "size needed for read_n<unordered_multimap>.");
+	}
+
+	template<typename... S>
+	static inline unordered_multimap<K, V, Hash, Eq, Alloc> read(istream& strm, size_t n, S... s)
+	{
+		unordered_multimap<K, V, Hash, Eq, Alloc> c;
+		while (n--) c.insert(ReadNHelper<pair<K, V>>::read(strm, s...));
+		return c;
+	}
+};
+
+template<typename T>
+inline T read_n()
+{
+	return ReadNHelper<T>::read(cin);
+}
+
+template<typename T, typename... S>
+inline T read_n(size_t size0, S... sizes)
+{
+	return ReadNHelper<T>::read(std::cin, size0, sizes...);
+}
+
+template<typename T, typename... S>
+inline T read_n(istream& strm, S... sizes)
+{
+	return ReadNHelper<T>::read(strm, sizes...);
+}
+
+template<size_t I>
+template<typename... Ts>
+inline void TupleReadNHelper<I>::read(tuple<Ts...>& t, istream& strm)
+{
+	TupleReadNHelper<I - 1>::read(t, strm);
+	typedef typename tuple_element<I - 1, tuple<Ts...>>::type Type;
+	get<I - 1>(t) = ReadNHelper<Type>::read(strm);
+}
+
+template<size_t I>
+template<typename... Ts, typename... S>
+inline void TupleReadNHelper<I>::read(tuple<Ts...>& t, istream& strm, size_t n, S... s)
+{
+	TupleReadNHelper<I - 1>::read(t, strm, n, s...);
+	typedef typename tuple_element<I - 1, tuple<Ts...>>::type Type;
+	get<I - 1>(t) = ReadNHelper<Type>::read(strm, s...);
 }
 
 template<size_t Depth, size_t I>
 struct TupleWriteHelper
 {
 	template<typename... Ts, typename Delim0, typename... Delims>
-	static inline void write(const tuple<Ts...>& c, const tuple<Delim0, Delims...>& delims);
+	static inline void write(const tuple<Ts...>& c, ostream& strm, const tuple<Delim0, Delims...>& delims);
 	template<typename... Ts>
-	static inline void write(const tuple<Ts...>& c);
+	static inline void write(const tuple<Ts...>& c, ostream& strm);
 	template<typename... Ts, typename Delim0, typename... Delims>
-	static inline void write(tuple<Ts&...>&& c, const tuple<Delim0, Delims...>& delims);
+	static inline void write(tuple<Ts&...>&& c, ostream& strm, const tuple<Delim0, Delims...>& delims);
 	template<typename... Ts>
-	static inline void write(tuple<Ts&...>&& c);
+	static inline void write(tuple<Ts&...>&& c, ostream& strm);
 };
 
 template<size_t Depth>
 struct TupleWriteHelper<Depth, 0>
 {
 	template<typename... Ts, typename Delim0, typename... Delims>
-	static inline void write(const tuple<Ts...>& c, const tuple<Delim0, Delims...>& delims) {}
+	static inline void write(const tuple<Ts...>& c, ostream& strm, const tuple<Delim0, Delims...>& delims) {}
 	template<typename... Ts>
-	static inline void write(const tuple<Ts...>& c) {}
+	static inline void write(const tuple<Ts...>& c, ostream& strm) {}
 };
 
 template<size_t Depth = 0, typename Iter, typename Delim0, typename... Delims>
-inline void write_rng(Iter first, Iter last, const tuple<Delim0, Delims...>& delims);
+inline void write_rng(Iter first, Iter last, ostream& strm, const tuple<Delim0, Delims...>& delims);
 
 template<typename Iter>
-inline void write_rng(Iter first, Iter last);
+inline void write_rng(Iter first, Iter last, ostream& strm);
 
 template<typename T>
-inline void write(const T& t)
+inline void write(const T& t, ostream& strm)
 {
-	cout << t;
+	strm << t;
 }
 
 template<size_t Depth, typename T, typename Delim0, typename... Delims>
-inline void writeD(const T& t, const tuple<Delim0, Delims...>&)
+inline void writetd(const T& t, ostream& strm, const tuple<Delim0, Delims...>&)
 {
-	write(t);
+	write(t, strm);
 }
 
+// TODO pass strm recursively
+
 template<typename T, typename U>
-inline void write(const pair<T, U>& c)
+inline void write(const pair<T, U>& c, ostream& strm)
 {
-	write(c.first);
-	write(c.second);
+	write(c.first, strm);
+	write(c.second, strm);
 }
 
 template<size_t Depth, typename T, typename U, typename Delim0, typename... Delims>
-inline void writeD(const pair<T, U>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const pair<T, U>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
 	constexpr bool hasDelim = Depth < tuple_size<tuple<Delim0, Delims...>>::value;
 	constexpr size_t safeDepth = hasDelim ? Depth : 0;
 	if (hasDelim)
 	{
-		writeD<Depth + 1>(c.first, delims);
-		write(get<safeDepth>(delims));
-		writeD<Depth + 1>(c.second, delims);
+		writetd<Depth + 1>(c.first, strm, delims);
+		write(get<safeDepth>(delims), strm);
+		writetd<Depth + 1>(c.second, strm, delims);
 	}
 	else
 	{
-		write(c.first);
-		write(c.second);
+		write(c.first, strm);
+		write(c.second, strm);
 	}
 }
 
 template<typename... Ts>
-inline void write(const tuple<Ts...>& c)
+inline void write(const tuple<Ts...>& c, ostream& strm)
 {
 	TupleWriteHelper<0, tuple_size<tuple<Ts...>>::value>::write(c);
 }
 
 template<size_t Depth, typename... Ts, typename Delim0, typename... Delims>
-inline void writeD(const tuple<Ts...>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const tuple<Ts...>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	TupleWriteHelper<Depth, tuple_size<tuple<Ts...>>::value>::write(c, delims);
+	TupleWriteHelper<Depth, tuple_size<tuple<Ts...>>::value>::write(c, strm, delims);
 }
 
 template<typename... Ts>
-inline void write(tuple<Ts&...>&& c)
+inline void write(tuple<Ts&...>&& c, ostream& strm)
 {
 	TupleWriteHelper<0, tuple_size<tuple<Ts...>>::value>::write(c);
 }
 
 template<size_t Depth, typename... Ts, typename Delim0, typename... Delims>
-inline void writeD(tuple<Ts&...>&& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(tuple<Ts&...>&& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
 	TupleWriteHelper<Depth, tuple_size<tuple<Ts...>>::value>::write(c, delims);
 }
 
 template<typename T>
-inline void write(const initializer_list<T>& c)
+inline void write(const initializer_list<T>& c, ostream& strm)
 {
-	write_rng(ALL(c));
+	write_rng(ALL(c), strm);
 }
 
 template<size_t Depth, typename T, typename Delim0, typename... Delims>
-inline void writeD(const initializer_list<T>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const initializer_list<T>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	write_rng<Depth>(ALL(c), delims);
+	write_rng<Depth>(ALL(c), strm, delims);
 }
 
 template<typename T, size_t Size>
-inline void write(const array<T, Size>& c)
+inline void write(const array<T, Size>& c, ostream& strm)
 {
-	write_rng(ALL(c));
+	write_rng(ALL(c), strm);
 }
 
 template<size_t Depth, typename T, size_t Size, typename Delim0, typename... Delims>
-inline void writeD(const array<T, Size>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const array<T, Size>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	write_rng<Depth>(ALL(c), delims);
+	write_rng<Depth>(ALL(c), strm, delims);
 }
 
 template<typename T, typename Alloc>
-inline void write(const vector<T, Alloc>& c)
+inline void write(const vector<T, Alloc>& c, ostream& strm)
 {
-	write_rng(ALL(c));
+	write_rng(ALL(c), strm);
 }
 
 template<size_t Depth, typename T, typename Alloc, typename Delim0, typename... Delims>
-inline void writeD(const vector<T, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const vector<T, Alloc>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	write_rng<Depth>(ALL(c), delims);
+	write_rng<Depth>(ALL(c), strm, delims);
 }
 
 template<typename T, typename Alloc>
-inline void write(const deque<T, Alloc>& c)
+inline void write(const deque<T, Alloc>& c, ostream& strm)
 {
-	write_rng(ALL(c));
+	write_rng(ALL(c), strm);
 }
 
 template<size_t Depth, typename T, typename Alloc, typename Delim0, typename... Delims>
-inline void writeD(const deque<T, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const deque<T, Alloc>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	write_rng<Depth>(ALL(c), delims);
+	write_rng<Depth>(ALL(c), strm, delims);
 }
 
 template<typename T, typename Alloc>
-inline void write(const list<T, Alloc>& c)
+inline void write(const list<T, Alloc>& c, ostream& strm)
 {
-	write_rng(ALL(c));
+	write_rng(ALL(c), strm);
 }
 
 template<size_t Depth, typename T, typename Alloc, typename Delim0, typename... Delims>
-inline void writeD(const list<T, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const list<T, Alloc>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	write_rng<Depth>(ALL(c), delims);
+	write_rng<Depth>(ALL(c), strm, delims);
 }
 
 template<typename T, typename Alloc>
-inline void write(const forward_list<T, Alloc>& c)
+inline void write(const forward_list<T, Alloc>& c, ostream& strm)
 {
-	write_rng(ALL(c));
+	write_rng(ALL(c), strm);
 }
 
 template<size_t Depth, typename T, typename Alloc, typename Delim0, typename... Delims>
-inline void writeD(const forward_list<T, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const forward_list<T, Alloc>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	write_rng<Depth>(ALL(c), delims);
+	write_rng<Depth>(ALL(c), strm, delims);
 }
 
 template<typename T, typename Pr, typename Alloc>
-inline void write(const set<T, Pr, Alloc>& c)
+inline void write(const set<T, Pr, Alloc>& c, ostream& strm)
 {
-	write_rng(ALL(c));
+	write_rng(ALL(c), strm);
 }
 
 template<size_t Depth, typename T, typename Pr, typename Alloc, typename Delim0, typename... Delims>
-inline void writeD(const set<T, Pr, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const set<T, Pr, Alloc>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	write_rng<Depth>(ALL(c), delims);
+	write_rng<Depth>(ALL(c), strm, delims);
 }
 
 template<typename T, typename Pr, typename Alloc>
-inline void write(const multiset<T, Pr, Alloc>& c)
+inline void write(const multiset<T, Pr, Alloc>& c, ostream& strm)
 {
-	write_rng(ALL(c));
+	write_rng(ALL(c), strm);
 }
 
 template<size_t Depth, typename T, typename Pr, typename Alloc, typename Delim0, typename... Delims>
-inline void writeD(const multiset<T, Pr, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const multiset<T, Pr, Alloc>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	write_rng<Depth>(ALL(c), delims);
+	write_rng<Depth>(ALL(c), strm, delims);
 }
 
 template<typename T, typename Hash, typename Eq, typename Alloc>
-inline void write(const unordered_set<T, Hash, Eq, Alloc>& c)
+inline void write(const unordered_set<T, Hash, Eq, Alloc>& c, ostream& strm)
 {
-	write_rng(ALL(c));
+	write_rng(ALL(c), strm);
 }
 
 template<size_t Depth, typename T, typename Hash, typename Eq, typename Alloc, typename Delim0, typename... Delims>
-inline void writeD(const unordered_set<T, Hash, Eq, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const unordered_set<T, Hash, Eq, Alloc>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	write_rng<Depth>(ALL(c), delims);
+	write_rng<Depth>(ALL(c), strm, delims);
 }
 
 template<typename T, typename Hash, typename Eq, typename Alloc>
-inline void write(const unordered_multiset<T, Hash, Eq, Alloc>& c)
+inline void write(const unordered_multiset<T, Hash, Eq, Alloc>& c, ostream& strm)
 {
-	write_rng(ALL(c));
+	write_rng(ALL(c), strm);
 }
 
 template<size_t Depth, typename T, typename Hash, typename Eq, typename Alloc, typename Delim0, typename... Delims>
-inline void writeD(const unordered_multiset<T, Hash, Eq, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const unordered_multiset<T, Hash, Eq, Alloc>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	write_rng<Depth>(ALL(c), delims);
+	write_rng<Depth>(ALL(c), strm, delims);
 }
 
 template<typename K, typename V, typename Pr, typename Alloc>
-inline void write(const map<K, V, Pr, Alloc>& c)
+inline void write(const map<K, V, Pr, Alloc>& c, ostream& strm)
 {
-	write_rng(ALL(c));
+	write_rng(ALL(c), strm);
 }
 
 template<size_t Depth, typename K, typename V, typename Pr, typename Alloc, typename Delim0, typename... Delims>
-inline void writeD(const map<K, V, Pr, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const map<K, V, Pr, Alloc>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	write_rng<Depth>(ALL(c), delims);
+	write_rng<Depth>(ALL(c), strm, delims);
 }
 
 template<typename K, typename V, typename Pr, typename Alloc>
-inline void write(const multimap<K, V, Pr, Alloc>& c)
+inline void write(const multimap<K, V, Pr, Alloc>& c, ostream& strm)
 {
-	write_rng(ALL(c));
+	write_rng(ALL(c), strm);
 }
 
 template<size_t Depth, typename K, typename V, typename Pr, typename Alloc, typename Delim0, typename... Delims>
-inline void writeD(const multimap<K, V, Pr, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const multimap<K, V, Pr, Alloc>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	write_rng<Depth>(ALL(c), delims);
+	write_rng<Depth>(ALL(c), strm, delims);
 }
 
 template<typename K, typename V, typename Hash, typename Eq, typename Alloc>
-inline void write(const unordered_map<K, V, Hash, Eq, Alloc>& c)
+inline void write(const unordered_map<K, V, Hash, Eq, Alloc>& c, ostream& strm)
 {
-	write_rng(ALL(c));
+	write_rng(ALL(c), strm);
 }
 
 template<size_t Depth, typename K, typename V, typename Hash, typename Eq, typename Alloc, typename Delim0, typename... Delims>
-inline void writeD(const unordered_map<K, V, Hash, Eq, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const unordered_map<K, V, Hash, Eq, Alloc>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	write_rng<Depth>(ALL(c), delims);
+	write_rng<Depth>(ALL(c), strm, delims);
 }
 
 template<typename K, typename V, typename Hash, typename Eq, typename Alloc>
-inline void write(const unordered_multimap<K, V, Hash, Eq, Alloc>& c)
+inline void write(const unordered_multimap<K, V, Hash, Eq, Alloc>& c, ostream& strm)
 {
-	write_rng(ALL(c));
+	write_rng(ALL(c), strm);
 }
 
 template<size_t Depth, typename K, typename V, typename Hash, typename Eq, typename Alloc, typename Delim0, typename... Delims>
-inline void writeD(const unordered_multimap<K, V, Hash, Eq, Alloc>& c, const tuple<Delim0, Delims...>& delims)
+inline void writetd(const unordered_multimap<K, V, Hash, Eq, Alloc>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
-	write_rng<Depth>(ALL(c), delims);
+	write_rng<Depth>(ALL(c), strm, delims);
 }
 
 template<size_t Depth, size_t I>
 template<typename... Ts, typename Delim0, typename... Delims>
-inline void TupleWriteHelper<Depth, I>::write(const tuple<Ts...>& c, const tuple<Delim0, Delims...>& delims)
+inline void TupleWriteHelper<Depth, I>::write(const tuple<Ts...>& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
 	constexpr bool hasDelim = Depth < tuple_size<tuple<Delim0, Delims...>>::value;
 	constexpr size_t safeDepth = hasDelim ? Depth : 0;
-	TupleWriteHelper<Depth, I - 1>::write(c, delims);
-	writeD<Depth + 1>(get<I - 1>(c), delims);
-	if (hasDelim && I < tuple_size<tuple<Ts...>>::value) ::write(get<safeDepth>(delims));
+	TupleWriteHelper<Depth, I - 1>::write(c, strm, delims);
+	writetd<Depth + 1>(get<I - 1>(c), strm, delims);
+	if (hasDelim && I < tuple_size<tuple<Ts...>>::value) ::write(get<safeDepth>(delims), strm);
 }
 
 template<size_t Depth, size_t I>
 template<typename... Ts>
-inline void TupleWriteHelper<Depth, I>::write(const tuple<Ts...>& c)
+inline void TupleWriteHelper<Depth, I>::write(const tuple<Ts...>& c, ostream& strm)
 {
-	TupleWriteHelper<Depth, I - 1>::write(c);
-	::write(get<I - 1>(c));
+	TupleWriteHelper<Depth, I - 1>::write(c, strm);
+	::write(get<I - 1>(c), strm);
 }
 
 template<size_t Depth, size_t I>
 template<typename... Ts, typename Delim0, typename... Delims>
-inline void TupleWriteHelper<Depth, I>::write(tuple<Ts&...>&& c, const tuple<Delim0, Delims...>& delims)
+inline void TupleWriteHelper<Depth, I>::write(tuple<Ts&...>&& c, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
 	constexpr bool hasDelim = Depth < tuple_size<tuple<Delim0, Delims...>>::value;
 	constexpr size_t safeDepth = hasDelim ? Depth : 0;
-	TupleWriteHelper<Depth, I - 1>::write(c, delims);
-	writeD<Depth + 1>(get<I - 1>(c), delims);
-	if (hasDelim && I < tuple_size<tuple<Ts...>>::value) ::write(get<safeDepth>(delims));
+	TupleWriteHelper<Depth, I - 1>::write(c, strm, delims);
+	writetd<Depth + 1>(get<I - 1>(c), strm, delims);
+	if (hasDelim && I < tuple_size<tuple<Ts...>>::value) ::write(get<safeDepth>(delims), strm);
 }
 
 template<size_t Depth, size_t I>
 template<typename... Ts>
-inline void TupleWriteHelper<Depth, I>::write(tuple<Ts&...>&& c)
+inline void TupleWriteHelper<Depth, I>::write(tuple<Ts&...>&& c, ostream& strm)
 {
-	TupleWriteHelper<Depth, I - 1>::write(c);
-	::write(get<I - 1>(c));
+	TupleWriteHelper<Depth, I - 1>::write(c, strm);
+	::write(get<I - 1>(c), strm);
 }
 
 template<size_t Depth, typename Iter, typename Delim0, typename... Delims>
-inline void write_rng(Iter first, Iter last, const tuple<Delim0, Delims...>& delims)
+inline void write_rng(Iter first, Iter last, ostream& strm, const tuple<Delim0, Delims...>& delims)
 {
 	if (first == last) return;
 	constexpr bool hasDelim = Depth < tuple_size<tuple<Delim0, Delims...>>::value;
@@ -845,29 +1228,41 @@ inline void write_rng(Iter first, Iter last, const tuple<Delim0, Delims...>& del
 	{
 		for (;;)
 		{
-			writeD<Depth + 1>(*(first++), delims);
+			writetd<Depth + 1>(*(first++), strm, delims);
 			if (first == last) break;
-			write(get<safeDepth>(delims));
+			write(get<safeDepth>(delims), strm);
 		}
 	}
 	else
 	{
 		do
-			write(*(first++));
+			write(*(first++), strm);
 		while (first != last);
 	}
 }
 
 template<typename Iter>
-inline void write_rng(Iter first, Iter last)
+inline void write_rng(Iter first, Iter last, ostream& strm)
 {
-	while (first != last) write(*(first++));
+	while (first != last) write(*(first++), strm);
+}
+
+template<typename T>
+inline void write(const T& t)
+{
+	write(t, cout);
 }
 
 template<typename T, typename Delim0, typename... Delims>
-inline void write(const T& t, const Delim0& delim0, const Delims&... delims)
+inline void writed(const T& t, const Delim0& delim0, const Delims&... delims)
 {
-	writeD<0>(t, tie(delim0, delims...));
+	writetd<0>(t, cout, tie(delim0, delims...));
+}
+
+template<typename T, typename Delim0, typename... Delims>
+inline void writed(const T& t, ostream& strm, const Delim0& delim0, const Delims&... delims)
+{
+	writetd<0>(t, strm, tie(delim0, delims...));
 }
 
 template<typename T>
@@ -892,6 +1287,13 @@ inline constexpr T gcd(T l, T r)
 	return l << s;
 }
 
+template<typename Iter>
+inline constexpr typename iterator_traits<Iter>::value_type gcd(Iter first, Iter last)
+{
+	using T = typename iterator_traits<Iter>::value_type;
+	return accumulate(first, last, (T)0, gcd<T>);
+}
+
 template<typename T>
 inline constexpr T gcd(initializer_list<T> args)
 {
@@ -902,6 +1304,13 @@ template<typename T>
 inline constexpr T lcm(T l, T r) // l and r should be nonzero
 {
 	return l / gcd(l, r) * r;
+}
+
+template<typename Iter>
+inline constexpr typename iterator_traits<Iter>::value_type lcm(Iter first, Iter last)
+{
+	using T = typename iterator_traits<Iter>::value_type;
+	return accumulate(first, last, (T)1, lcm<T>);
 }
 
 template<typename T>
@@ -917,9 +1326,14 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 
+	//uli T;
+	//cin >> T;
+	//while (T--)
 	go();
 
 	return 0;
 }
+
+// TODO writeln
 
 #endif

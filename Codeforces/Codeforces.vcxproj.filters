@@ -18,4 +18,9 @@
     <Text Include="input.txt" />
     <Text Include="output.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="In-Progress\1552D Array Differentiation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>

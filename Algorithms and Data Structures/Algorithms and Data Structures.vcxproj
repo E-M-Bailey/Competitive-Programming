@@ -88,6 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)Impl Finished;$(ProjectDir)Impl In-Progress;$(SolutionDir)Template</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -102,6 +103,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)Impl Finished;$(ProjectDir)Impl In-Progress;$(SolutionDir)Template</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -116,6 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)Impl Finished;$(ProjectDir)Impl In-Progress;$(SolutionDir)Template</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,6 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)Impl Finished;$(ProjectDir)Impl In-Progress;$(SolutionDir)Template</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,16 +143,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Implementations\All Points Closest Pair [O(n) Expected].h" />
-    <ClInclude Include="Implementations\Mergesort Inversion Count [O%28nlogn%29].h" />
-    <ClInclude Include="Template.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Test\Mergesort Inversion Count [O%28nlogn%29].cpp" />
+    <ClInclude Include="Impl Finished\range.h" />
+    <ClInclude Include="Impl In-Progress\All Points Closest Pair [O%28n%29 Expected].h" />
+    <ClInclude Include="Impl In-Progress\segment_tree.h" />
+    <ClInclude Include="Impl In-Progress\Mergesort Inversion Count [O%28nlogn%29].h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="output.txt" />
     <Text Include="input.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Test\Segment Tree.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

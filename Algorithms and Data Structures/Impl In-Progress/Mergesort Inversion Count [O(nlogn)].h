@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Template.h"
+#include <Template.h>
 
 template<typename Iter>
 inline size_t mergeSortInversionCount(Iter first, Iter last)
@@ -15,8 +15,8 @@ inline size_t mergeSortInversionCount(Iter first, Iter last)
 		size_t m = 2 * halfM;
 		for (Iter lo = first; lo != last; lo += min(m, static_cast<size_t>(last - lo)))
 		{
-			if (last - lo <= halfM) break;
-			bool stop = last - lo <= m;
+			if (static_cast<size_t>(last - lo) <= halfM) break;
+			bool stop = static_cast<size_t>(last - lo) <= m;
 			Iter mid = lo + halfM;
 			Iter hi = stop ? last : mid + halfM;
 			Iter lItr = lo, rItr = mid;
