@@ -19,7 +19,7 @@
     <Text Include="output.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="In-Progress\1552D Array Differentiation.cpp">
+    <ClCompile Include="In-Progress\1555D Say No to Palindromes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
